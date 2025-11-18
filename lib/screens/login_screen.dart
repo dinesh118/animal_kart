@@ -1,6 +1,6 @@
 
 import 'package:animal_kart_demo2/providers/auth_provider.dart';
-import 'package:animal_kart_demo2/screens/otp_screen.dart';
+import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,12 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         .sendOtp(phoneController.text.trim());
 
                     if (ref.read(authProvider).otpSent) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const OtpScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, AppRoutes.otp);
                     }
                   },
                   style: ElevatedButton.styleFrom(

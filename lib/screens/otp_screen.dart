@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:animal_kart_demo2/providers/auth_provider.dart';
+import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
@@ -93,10 +94,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                       );
 
                   if (ref.read(authProvider).isVerified) {
-                    Navigator.pushNamedAndRemoveUntil(
+                    // Get the phone number from the auth provider or pass it from login
+                    final phoneNumber = ref.read(authProvider).phoneNumber;
+                    Navigator.pushReplacementNamed(
                       context,
-                      '/main-home',
-                      (route) => false,
+                      AppRoutes.profileForm,
+                      arguments: phoneNumber,
                     );
                   }
                 },
