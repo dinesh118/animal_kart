@@ -1,276 +1,411 @@
-// import 'package:animal_kart_demo2/controllers/buffalo_provider.dart';
-// import 'package:animal_kart_demo2/controllers/cart_provider.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:animal_kart_demo2/controllers/buffalo_provider.dart';
+import 'package:animal_kart_demo2/controllers/cart_provider.dart';
+import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// class CartScreen extends ConsumerWidget {
-//   const CartScreen({super.key});
+class CartScreen extends ConsumerWidget {
+  final bool showAppBar;
+  const CartScreen({super.key, this.showAppBar = false});
 
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final cart = ref.watch(cartProvider);
-//     final buffaloList = ref.watch(buffaloListProvider);
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cart = ref.watch(cartProvider);
+    final buffaloList = ref.watch(buffaloListProvider);
 
-//     final items = buffaloList.where((b) => cart.containsKey(b.id)).toList();
+    final items = buffaloList.where((b) => cart.containsKey(b.id)).toList();
 
-//     if (items.isEmpty) {
-//       return const Scaffold(
-//         body: Center(
-//           child: Text(
-//             "Your cart is empty",
-//             style: TextStyle(fontSize: 18, color: Colors.grey),
-//           ),
-//         ),
-//       );
-//     }
+    // ------------------------------------
+    // EMPTY CART UI
+    // ------------------------------------
+    if (items.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Text(
+            "Your cart is empty",
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+      );
+    }
 
-//     /// Calculate Grand Total
-//     int grandTotal = 0;
-//     for (final buff in items) {
-//       final item = cart[buff.id]!;
-//       final buffaloCost = buff.price * item.qty;
-//       final insuranceCost = item.insurancePaid;
-//       grandTotal += (buffaloCost + insuranceCost);
-//     }
+    // ------------------------------------
+    // CART SCREEN
+    // ------------------------------------
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F8F8),
 
-//     return Scaffold(
-//       backgroundColor: Colors.grey.shade100,
+      // ---------- TOP APPBAR ----------
+      appBar: showAppBar
+          ? AppBar(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              toolbarHeight: 48,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: const Text(
+                "Cart",
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  color: Colors.black,
+                ),
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+              ),
+            )
+          : null,
 
-//       /// ------------------------------------------------------------
-//       /// BOTTOM STICKY TOTAL + PLACE ORDER
-//       /// ------------------------------------------------------------
-//       bottomNavigationBar: Container(
-//         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-//           boxShadow: [
-//             BoxShadow(
-//               blurRadius: 6,
-//               offset: const Offset(0, -2),
-//               color: Colors.black.withOpacity(0.1),
-//             ),
-//           ],
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Text(
-//               "Total: ₹$grandTotal",
-//               style: const TextStyle(
-//                 color: Colors.blue,
-//                 fontSize: 20,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//             ElevatedButton(
-//               onPressed: () {
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   const SnackBar(content: Text("Order Placed Successfully!")),
-//                 );
-//               },
-//               style: ElevatedButton.styleFrom(
-//                 padding: const EdgeInsets.symmetric(
-//                   horizontal: 28,
-//                   vertical: 14,
-//                 ),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//               ),
-//               child: const Text("Place Order", style: TextStyle(fontSize: 16)),
-//             ),
-//           ],
-//         ),
-//       ),
+      // ---------- BOTTOM BUTTON ----------
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: SizedBox(
+          height: 55,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kPrimaryGreen,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+            ),
+            child: const Text(
+              "Proceed to Payment",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
 
-//       /// ------------------------------------------------------------
-//       /// MAIN CART LIST
-//       /// ------------------------------------------------------------
-//       body: ListView(
-//         padding: const EdgeInsets.all(16),
-//         children: [
-//           ...items.map((buff) {
-//             final item = cart[buff.id]!;
-//             final qty = item.qty;
+      // ---------- MAIN LIST ----------
+    // ---------- MAIN LIST ----------
+body: ListView(
+  padding: const EdgeInsets.all(16),
+  children: items.map((buff) {
+    final cartItem = cart[buff.id]!;
+    final qty = cartItem.qty;
 
-//             final buffaloCost = buff.price * qty;
-//             final insuranceCost = item.insurancePaid;
-//             final itemTotal = buffaloCost + insuranceCost;
+    final itemPrice = buff.price * qty;
+    final insurance = cartItem.insurancePaid;
 
-//             return Container(
-//               margin: const EdgeInsets.only(bottom: 18),
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.circular(14),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     blurRadius: 6,
-//                     offset: const Offset(0, 2),
-//                     color: Colors.black.withOpacity(0.05),
-//                   ),
-//                 ],
-//               ),
-//               padding: const EdgeInsets.all(18),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   /// Breed Name
-//                   Text(
-//                     buff.breed,
-//                     style: const TextStyle(
-//                       fontSize: 22,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
+    final img = buff.buffaloImages.first;
+    final isNetwork = img.startsWith("http");
 
-//                   const SizedBox(height: 8),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 22),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 10,
+            color: Colors.black.withOpacity(0.06),
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ------------------------------------------------
+          // TOP ROW : IMAGE + DETAILS + DELETE
+          // ------------------------------------------------
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: isNetwork
+                    ? Image.network(
+                        img,
+                        width: 110,
+                        height: 135,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        img,
+                        width: 110,
+                        height: 135,
+                        fit: BoxFit.cover,
+                      ),
+              ),
 
-//                   /// Details
-//                   Text(
-//                     "Milk Yield: ${buff.milkYield} L/day",
-//                     style: const TextStyle(fontSize: 14),
-//                   ),
-//                   Text("Quantity: $qty", style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 14),
 
-//                   const SizedBox(height: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      buff.breed,
+                      style: const TextStyle(
+                          fontSize: 19, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 3),
 
-//                   /// ------------------------------------------------------------
-//                   /// PRICE BREAKDOWN - TABLE FORMAT
-//                   /// ------------------------------------------------------------
-//                   Container(
-//                     padding: const EdgeInsets.all(14),
-//                     decoration: BoxDecoration(
-//                       color: Colors.grey.shade100,
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text(
-//                           "Price Breakdown",
-//                           style: TextStyle(
-//                             color: Colors.grey.shade700,
-//                             fontWeight: FontWeight.w600,
-//                           ),
-//                         ),
-//                         const SizedBox(height: 12),
+                    Text(
+                      "Age: ${buff.age ?? '--'} yrs",
+                      style: TextStyle(
+                          fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                    Text(
+                      "Quantity: $qty",
+                      style: TextStyle(
+                          fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                    Text(
+                      "Milk Yield: ${buff.milkYield} L/day",
+                      style: TextStyle(
+                          fontSize: 14, color: Colors.grey.shade700),
+                    ),
 
-//                         /// ---------------- TABLE HEADER ----------------
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                           children: const [
-//                             Expanded(
-//                               child: Text(
-//                                 "Sl. No",
-//                                 style: TextStyle(
-//                                   fontWeight: FontWeight.bold,
-//                                   fontSize: 14,
-//                                 ),
-//                               ),
-//                             ),
-//                             Expanded(
-//                               child: Text(
-//                                 "Price",
-//                                 style: TextStyle(
-//                                   fontWeight: FontWeight.bold,
-//                                   fontSize: 14,
-//                                 ),
-//                               ),
-//                             ),
-//                             Expanded(
-//                               child: Text(
-//                                 "Insurance",
-//                                 textAlign: TextAlign.right,
-//                                 style: TextStyle(
-//                                   fontWeight: FontWeight.bold,
-//                                   fontSize: 14,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
+                    const SizedBox(height: 10),
 
-//                         const Divider(),
+                    // ------------------ QTY BOX ------------------
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3F5F2),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () => ref
+                                .read(cartProvider.notifier)
+                                .decrease(buff.id),
+                            child: const Icon(Icons.remove,
+                                size: 22, color: Colors.black),
+                          ),
+                          const SizedBox(width: 22),
+                          Text(
+                            "$qty",
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(width: 22),
+                          GestureDetector(
+                            onTap: () => ref
+                                .read(cartProvider.notifier)
+                                .increase(buff.id),
+                            child: const Icon(Icons.add,
+                                size: 22, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-//                         /// ---------------- ROW 1 ----------------
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                           children: [
-//                             const Expanded(child: Text("1")),
-//                             Expanded(child: Text("₹${buff.price}")),
-//                             Expanded(
-//                               child: Text(
-//                                 insuranceCost > 0
-//                                     ? "₹${insuranceCost}"
-//                                     : "FREE",
-//                                 textAlign: TextAlign.right,
-//                                 style: TextStyle(
-//                                   color: insuranceCost == 0
-//                                       ? Colors.green
-//                                       : Colors.black,
-//                                   fontWeight: FontWeight.w600,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
+              // DELETE BUTTON
+              GestureDetector(
+                onTap: () => _confirmDelete(context, ref, buff.id),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.delete, color: Colors.red),
+                ),
+              ),
+            ],
+          ),
 
-//                         /// ---------------- ROW 2 (qty ≥ 2) ----------------
-//                         if (qty >= 2) ...[
-//                           const SizedBox(height: 10),
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               const Expanded(child: Text("2")),
-//                               Expanded(child: Text("₹${buff.price}")),
-//                               const Expanded(
-//                                 child: Text(
-//                                   "FREE",
-//                                   textAlign: TextAlign.right,
-//                                   style: TextStyle(
-//                                     color: Colors.green,
-//                                     fontWeight: FontWeight.w600,
-//                                   ),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ],
+          const SizedBox(height: 18),
 
-//                         const SizedBox(height: 12),
-//                         const Divider(height: 22),
+          // -------------------- NOTE BOX --------------------
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8F8FF),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Text(
+              "Note:\nIf you purchase 2 Murrah buffaloes you will receive insurance for the second buffalo completely Free",
+              style: TextStyle(fontSize: 14, height: 1.5),
+            ),
+          ),
 
-//                         /// ---------------- SUBTOTAL ----------------
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                           children: [
-//                             const Text(
-//                               "Subtotal",
-//                               style: TextStyle(
-//                                 fontSize: 16,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                             Text(
-//                               "₹$itemTotal",
-//                               style: const TextStyle(
-//                                 fontSize: 18,
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.blue,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             );
-//           }),
-//         ],
-//       ),
-//     );
-//   }
-// }
+          const SizedBox(height: 18),
+
+          // -------------------- INFO BOX --------------------
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5FDEB),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "What happens next?",
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: 10),
+                Text("✓ 12-day quarantine period begins",
+                    style: TextStyle(height: 1.5)),
+                Text("✓ Daily health monitoring updates",
+                    style: TextStyle(height: 1.5)),
+                Text("✓ Replacement guarantee if issues found",
+                    style: TextStyle(height: 1.5)),
+                Text("✓ GPS-tracked safe transport",
+                    style: TextStyle(height: 1.5)),
+                Text("✓ Complete documentation provided",
+                    style: TextStyle(height: 1.5)),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // ------------------ PRICE BREAKDOWN ------------------
+          const Text(
+            "Price Breakdown",
+            style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: Colors.black),
+          ),
+          const SizedBox(height: 14),
+
+          _priceRow("Price:", "₹$itemPrice"),
+          const SizedBox(height: 6),
+
+          _priceRow("Insurance:", "₹$insurance"),
+
+          const Divider(height: 30),
+
+          _priceRow("Sub Total", "₹${itemPrice + insurance}", isBold: true),
+        ],
+      ),
+    );
+  }).toList(),
+),
+
+    );
+  }
+
+  // Helper: Price Row
+  Widget _priceRow(String title, String value, {bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title,
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500)),
+        Text(value,
+            style: TextStyle(
+                fontSize: isBold ? 19 : 15,
+                fontWeight: isBold ? FontWeight.w800 : FontWeight.w600)),
+      ],
+    );
+  }
+}
+
+
+void _confirmDelete(BuildContext context, WidgetRef ref, String id) {
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // CLOSE BUTTON
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close, size: 22),
+                ),
+              ),
+
+              const SizedBox(height: 5),
+              const Text(
+                "Message",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+
+              const Text(
+                "Are you sure you want to delete\nthis buffalo from your cart?",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, height: 1.4),
+              ),
+
+              const SizedBox(height: 25),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // YES
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(cartProvider.notifier).remove(id);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.black),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28, vertical: 12),
+                    ),
+                    child: const Text("Yes",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                  ),
+
+                  // NO
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kPrimaryGreen,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28, vertical: 12),
+                    ),
+                    child: const Text("No",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+

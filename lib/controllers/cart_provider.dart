@@ -1,69 +1,59 @@
-// import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
-// class CartItem {
-//   final int qty;
-//   final int insurancePaid;
+class CartItem {
+  final int qty;
+  final int insurancePaid;
 
-//   CartItem({
-//     required this.qty,
-//     required this.insurancePaid,
-//   });
+  CartItem({required this.qty, required this.insurancePaid});
 
-//   CartItem copyWith({int? qty, int? insurancePaid}) {
-//     return CartItem(
-//       qty: qty ?? this.qty,
-//       insurancePaid: insurancePaid ?? this.insurancePaid,
-//     );
-//   }
-// }
+  CartItem copyWith({int? qty, int? insurancePaid}) {
+    return CartItem(
+      qty: qty ?? this.qty,
+      insurancePaid: insurancePaid ?? this.insurancePaid,
+    );
+  }
+}
 
-// final cartProvider =
-//     StateNotifierProvider<CartController, Map<String, CartItem>>(
-//   (ref) => CartController(),
-// );
+class CartController extends StateNotifier<Map<String, CartItem>> {
+  CartController() : super({});
 
-// class CartController extends StateNotifier<Map<String, CartItem>> {
-//   CartController() : super({});
+  /// Set qty (and insurance rule: pay insurance only once)
+  void setItem(String id, int qty, int insurancePerBuffalo) {
+    if (qty <= 0) {
+      remove(id);
+      return;
+    }
 
-//   /// Add 1 buffalo + insurance
-//   void addSingle(String id, int insurance) {
-//     state = {
-//       ...state,
-//       id: CartItem(qty: 1, insurancePaid: insurance),
-//     };
-//   }
+    final insurancePaid = qty >= 2 ? insurancePerBuffalo : insurancePerBuffalo;
+    state = {
+      ...state,
+      id: CartItem(qty: qty, insurancePaid: insurancePaid),
+    };
+  }
 
-//   /// Add 2 buffalo + only 1 insurance (1 free)
-//   void addDoubleOffer(String id, int insurance) {
-//     state = {
-//       ...state,
-//       id: CartItem(qty: 2, insurancePaid: insurance),
-//     };
-//   }
+  void remove(String id) {
+    if (!state.containsKey(id)) return;
+    final copy = {...state};
+    copy.remove(id);
+    state = copy;
+  }
 
-//   void increase(String id) {
-//     if (!state.containsKey(id)) return;
+  void increase(String id) {
+    if (!state.containsKey(id)) return;
+    final old = state[id]!;
+    setItem(id, old.qty + 1, old.insurancePaid);
+  }
 
-//     state = {
-//       ...state,
-//       id: state[id]!.copyWith(qty: state[id]!.qty + 1),
-//     };
-//   }
+  void decrease(String id) {
+    if (!state.containsKey(id)) return;
+    final old = state[id]!;
+    setItem(id, old.qty - 1, old.insurancePaid);
+  }
 
-//   void decrease(String id) {
-//     if (!state.containsKey(id)) return;
+  int getCount(String id) => state[id]?.qty ?? 0;
+}
 
-//     if (state[id]!.qty == 1) {
-//       state.remove(id);
-//       state = {...state};
-//       return;
-//     }
-
-//     state = {
-//       ...state,
-//       id: state[id]!.copyWith(qty: state[id]!.qty - 1),
-//     };
-//   }
-
-//   int getCount(String id) => state[id]?.qty ?? 0;
-// }
+final cartProvider =
+    StateNotifierProvider<CartController, Map<String, CartItem>>(
+  (ref) => CartController(),
+);

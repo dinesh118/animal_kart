@@ -26,7 +26,7 @@ class AuthController extends ChangeNotifier {
     try {
       final deviceDetails = await ApiServices.fetchDeviceDetails();
       final response = await http.post(
-        Uri.parse("${AppConstants.verifyUserEndpoint}/verify"),
+        Uri.parse("${AppConstants.apiUrl}/users/verify"),
         headers: {HttpHeaders.contentTypeHeader: AppConstants.applicationJson},
         body: jsonEncode({
           'mobile': phone,
@@ -76,7 +76,7 @@ class AuthController extends ChangeNotifier {
       }
 
       final response = await http.put(
-        Uri.parse("${AppConstants.verifyUserEndpoint}/id/$targetUserId"),
+        Uri.parse("${AppConstants.apiUrl}/users/id/$targetUserId"),
         headers: {HttpHeaders.contentTypeHeader: AppConstants.applicationJson},
         body: jsonEncode(payload),
       );

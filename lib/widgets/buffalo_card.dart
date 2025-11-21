@@ -1,411 +1,416 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../models/buffalo.dart';
-// import '../controllers/cart_provider.dart';
+import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:animal_kart_demo2/widgets/bufflo_details_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// class BuffaloCard extends ConsumerWidget {
-//   final Buffalo buffalo;
+import '../models/buffalo.dart';
 
-//   const BuffaloCard({super.key, required this.buffalo});
+class BuffaloCard extends ConsumerWidget {
+  final Buffalo buffalo;
 
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final qty = ref.watch(cartProvider)[buffalo.id]?.qty ?? 0;
+  const BuffaloCard({super.key, required this.buffalo});
 
-//     final disabled = !buffalo.inStock;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final disabled = !buffalo.inStock;
 
-//     return Opacity(
-//       opacity: disabled ? 0.4 : 1,
-//       child: Container(
-//         margin: const EdgeInsets.all(12),
-//         padding: const EdgeInsets.all(16),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(18),
-//           border: Border.all(color: Colors.grey.shade300),
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             /// TOP: Breed + Healthy badge
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Text(buffalo.breed,
-//                     style: const TextStyle(
-//                         fontSize: 20, fontWeight: FontWeight.bold)),
+    final String firstImage = buffalo.buffaloImages.first;
+    final bool isNetwork = firstImage.startsWith("http");
 
-//                 disabled
-//                     ? Container(
-//                         padding:
-//                             const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-//                         decoration: BoxDecoration(
-//                           color: Colors.red.shade100,
-//                           borderRadius: BorderRadius.circular(14),
-//                         ),
-//                         child: const Text("Out of Stock",
-//                             style: TextStyle(color: Colors.red)),
-//                       )
-//                     : Container(
-//                         padding:
-//                             const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-//                         decoration: BoxDecoration(
-//                           color: Colors.green.shade100,
-//                           borderRadius: BorderRadius.circular(14),
-//                         ),
-//                         child: const Text(
-//                           "Healthy",
-//                           style: TextStyle(color: Colors.green),
-//                         ),
-//                       ),
-//               ],
-//             ),
+    return GestureDetector(
+      onTap: disabled
+          ? null
+          : () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BuffaloDetailsScreen(buffaloId: buffalo.id, ),
+                ),
+              );
 
-//             const SizedBox(height: 10),
+            },
+      child: Opacity(
+        opacity: disabled ? 0.4 : 1,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: kCardBg,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.06),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ===================== IMAGE =====================
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    child: isNetwork
+                        ? Image.network(
+                            firstImage,
+                            height: 190,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            firstImage,
+                            height: 190,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
 
-//             /// Milk Yield
-//             Row(
-//               children: [
-//                 const Text("Milk Yield: ",
-//                     style:
-//                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-//                 Text(
-//                   "${buffalo.milkYield} L/day",
-//                   style: const TextStyle(
-//                       fontSize: 16,
-//                       color: Colors.green,
-//                       fontWeight: FontWeight.w600),
-//                 ),
-//               ],
-//             ),
+                  // Status Tag: Available / Out of Stock
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: buffalo.inStock
+                            ? Colors.white
+                            : Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        buffalo.inStock ? "Available" : "Out of Stock",
+                        style: TextStyle(
+                          color: buffalo.inStock ? kPrimaryGreen : Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
-//             const SizedBox(height: 10),
+              // ===================== DETAILS =====================
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Breed + Milk Yield
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                buffalo.breed,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF111827),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  const Icon(Icons.local_drink,
+                                      size: 18, color: Colors.grey),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    "${buffalo.milkYield}L/day",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
 
-//             /// Insurance info icon
-//             InkWell(
-//               onTap: () => _showInsuranceInfo(context),
-//               child: Row(
-//                 children: const [
-//                   Icon(Icons.info_outline, size: 20, color: Colors.blue),
-//                   SizedBox(width: 6),
-//                   Text(
-//                     "Insurance Details",
-//                     style: TextStyle(color: Colors.blue),
-//                   )
-//                 ],
-//               ),
-//             ),
+                        const SizedBox(width: 12),
 
-//             const SizedBox(height: 14),
-//             Divider(),
-//             const SizedBox(height: 10),
+                        // Insurance Button
+                        OutlinedButton.icon(
+                          onPressed: () => _showInsuranceInfo(context),
+                          icon: const Icon(Icons.info_outline,
+                              size: 18, color: Colors.black),
+                          label: const Text(
+                            "Insurance Details",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF9FAFB),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            side: BorderSide.none,
+                          ),
+                        ),
+                      ],
+                    ),
 
-//             /// Price + Qty buttons
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Text("₹${buffalo.price}",
-//                     style: const TextStyle(
-//                         color: Colors.blue,
-//                         fontSize: 22,
-//                         fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 5),
 
-//                 disabled
-//                     ? const SizedBox()
-//                     : qty == 0
-//                         ? ElevatedButton(
-//                             onPressed: () =>
-//                                 showImprovedInsuranceDialog(context, ref, buffalo),
-//                             child: const Text("Add"),
-//                           )
-//                         : Row(
-//                             children: [
-//                               _qtyButton(
-//                                 icon: Icons.remove,
-//                                 onTap: () => ref
-//                                     .read(cartProvider.notifier)
-//                                     .decrease(buffalo.id),
-//                               ),
-//                               Padding(
-//                                 padding:
-//                                     const EdgeInsets.symmetric(horizontal: 12),
-//                                 child: Text("$qty",
-//                                     style: const TextStyle(
-//                                         fontSize: 18,
-//                                         fontWeight: FontWeight.bold)),
-//                               ),
-//                               _qtyButton(
-//                                 icon: Icons.add,
-//                                 onTap: () => ref
-//                                     .read(cartProvider.notifier)
-//                                     .increase(buffalo.id),
-//                               ),
-//                             ],
-//                           )
-//               ],
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+                    const Divider(
+                      color: Colors.greenAccent,
+                      thickness: 0.3,
+                      height: 10,
+                    ),
 
-//   Widget _qtyButton({required IconData icon, required VoidCallback onTap}) {
-//     return InkWell(
-//       onTap: onTap,
-//       child: Container(
-//         width: 36,
-//         height: 36,
-//         decoration:
-//             BoxDecoration(color: Colors.blue.shade50, shape: BoxShape.circle),
-//         child: Icon(icon, size: 20, color: Colors.blue),
-//       ),
-//     );
-//   }
+                    const SizedBox(height: 5),
 
-//   void _showInsuranceInfo(BuildContext context) {
-//     showModalBottomSheet(
-//       context: context,
-//       builder: (_) => Container(
-//         padding: const EdgeInsets.all(20),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: const [
-//             Text("Insurance Breakdown",
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-//             SizedBox(height: 12),
-//             Text("• Life Insurance – ₹6000"),
-//             Text("• Heat Insurance – ₹4000"),
-//             Text("• AI Insurance – ₹3000"),
-//             SizedBox(height: 16),
-//             Text("Total: ₹13000",
-//                 style: TextStyle(fontWeight: FontWeight.bold)),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+                    // ===================== Price + Add to Cart =====================
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Price Text
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Price",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              "₹${buffalo.price}",
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
 
-//  void showImprovedInsuranceDialog(
-//   BuildContext context,
-//   WidgetRef ref,
-//   Buffalo buffalo,
-// ) {
-//   showDialog(
-//     context: context,
-//     builder: (_) => Dialog(
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(22),
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(22),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // TITLE
-//             const Text(
-//               "Insurance Offer",
-//               style: TextStyle(
-//                 fontSize: 22,
-//                 fontWeight: FontWeight.w700,
-//                 color: Color(0xFF2C2C2C),
-//               ),
-//             ),
+                        // Add to Cart Button
+                        ElevatedButton(
+                          onPressed: disabled
+                              ? null
+                              : () {
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BuffaloDetailsScreen(buffaloId: buffalo.id),
+                                  ),
+                                );
 
-//             const SizedBox(height: 20),
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 28, vertical: 14),
+                          ),
+                          child: const Text(
+                            "Add to Cart",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-//             // TABLE BORDER BOX
-//             Container(
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 border: Border.all(color: Colors.grey.shade300),
-//                 borderRadius: BorderRadius.circular(16),
-//               ),
-//               child: Column(
-//                 children: [
-//                   // TABLE HEADER
-//                   Container(
-//                     padding: const EdgeInsets.symmetric(
-//                         horizontal: 12, vertical: 10),
-//                     decoration: BoxDecoration(
-//                       color: Colors.grey.shade100,
-//                       borderRadius: const BorderRadius.vertical(
-//                         top: Radius.circular(16),
-//                       ),
-//                     ),
-//                     child: Row(
-//                       children: const [
-//                         Expanded(
-//                           flex: 1,
-//                           child: Text(
-//                             "Sl. No",
-//                             style: TextStyle(
-//                                 fontSize: 13, fontWeight: FontWeight.bold),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "Price",
-//                             style: TextStyle(
-//                                 fontSize: 13, fontWeight: FontWeight.bold),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "Insurance",
-//                             style: TextStyle(
-//                                 fontSize: 13, fontWeight: FontWeight.bold),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
+  // ===================== SHOW INSURANCE MODAL =====================
+  void _showInsuranceInfo(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (_) => _insuranceSheet(context),
+    );
+  }
 
-//                   const Divider(height: 1),
+  // ===================== INSURANCE SHEET =====================
+  Widget _insuranceSheet(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Drag Handle
+          Container(
+            width: 50,
+            height: 5,
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
 
-//                   // ROW 1
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(
-//                         horizontal: 12, vertical: 12),
-//                     child: Row(
-//                       children: [
-//                         const Expanded(
-//                           flex: 1,
-//                           child: Text("1",
-//                               style: TextStyle(fontSize: 13)),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "₹${buffalo.price}",
-//                             style: const TextStyle(
-//                                 fontSize: 13,
-//                                 fontWeight: FontWeight.w600),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "₹${buffalo.insurance}",
-//                             style: const TextStyle(
-//                                 fontSize: 13,
-//                                 fontWeight: FontWeight.w600),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
+          // Header Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Insurance Offer",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.black12,
+                  child: Icon(Icons.close, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
 
-//                   const Divider(height: 1),
+          const SizedBox(height: 20),
 
-//                   // ROW 2
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(
-//                         horizontal: 12, vertical: 12),
-//                     child: Row(
-//                       children: [
-//                         const Expanded(
-//                           flex: 1,
-//                           child: Text("2",
-//                               style: TextStyle(fontSize: 13)),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "₹${buffalo.price}",
-//                             style: const TextStyle(
-//                                 fontSize: 13,
-//                                 fontWeight: FontWeight.w600),
-//                           ),
-//                         ),
-//                         const Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             "FREE",
-//                             style: TextStyle(
-//                               fontSize: 13,
-//                               fontWeight: FontWeight.w700,
-//                               color: Colors.green,
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
+          // ================= Insurance Table =================
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFF10B981), width: 1),
+            ),
+            child: Column(
+              children: [
+                // Header Row
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDFF7ED),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(18)),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(child: Text("S.No", style: _headerStyle)),
+                      Expanded(child: Text("Price", style: _headerStyle)),
+                      Expanded(
+                        child: Text(
+                          "Insurance",
+                          textAlign: TextAlign.right,
+                          style: _headerStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-//             const SizedBox(height: 18),
+                // Row 1
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  color: const Color(0xFF10B981),
+                  child: Row(
+                    children: const [
+                      Expanded(
+                          child: Text("1",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white))),
+                      Expanded(
+                          child: Text("₹150,000",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white))),
+                      Expanded(
+                        child: Text(
+                          "₹13,000",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-//             // NOTE BOX
-//             Container(
-//               decoration: BoxDecoration(
-//                 color: Colors.blue.shade50,
-//                 borderRadius: BorderRadius.circular(14),
-//               ),
-//               padding: const EdgeInsets.all(14),
-//               child: const Text(
-//                 "Note: If you purchase 2 Murrah buffaloes, you will receive "
-//                 "insurance for the second buffalo completely FREE.",
-//                 style: TextStyle(fontSize: 10),
-//               ),
-//             ),
+                // Row 2
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF4FFFA),
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(18)),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(child: Text("2", style: TextStyle(fontSize: 14))),
+                      Expanded(
+                          child: Text("₹150,000",
+                              style: TextStyle(fontSize: 14))),
+                      Expanded(
+                        child: Text(
+                          "Free",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF10B981),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-//             const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-//             // BUTTONS
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 TextButton(
-//                   child: const Text(
-//                     "Disagree",
-//                     style: TextStyle(
-//                       fontSize: 16,
-//                       color: Colors.red,
-//                       fontWeight: FontWeight.w600,
-//                     ),
-//                   ),
-//                   onPressed: () {
-//                     ref.read(cartProvider.notifier).addSingle(
-//                           buffalo.id,
-//                           buffalo.insurance,
-//                         );
-//                     Navigator.pop(context);
-//                   },
-//                 ),
-//                 ElevatedButton(
-//                   style: ElevatedButton.styleFrom(
-//                     padding: const EdgeInsets.symmetric(
-//                         vertical: 12, horizontal: 28),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(14),
-//                     ),
-//                   ),
-//                   child: const Text(
-//                     "Agree",
-//                     style: TextStyle(fontSize: 16),
-//                   ),
-//                   onPressed: () {
-//                     ref.read(cartProvider.notifier).addDoubleOffer(
-//                           buffalo.id,
-//                           buffalo.insurance,
-//                         );
-//                     Navigator.pop(context);
-//                   },
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     ),
-//   );
-// }
+          // ================= NOTE BOX =================
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEFFFF7),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Text(
+              "Note:\nIf you purchase 2 Murrah buffaloes, insurance for the second buffalo is completely free.",
+              style: TextStyle(fontSize: 15, height: 1.4),
+            ),
+          ),
 
-// }
+          const SizedBox(height: 25),
+        ],
+      ),
+    );
+  }
+}
+
+// Header Style Constant
+const _headerStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.w600,
+);

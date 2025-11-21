@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:animal_kart_demo2/auth/models/device_details.dart';
+import 'package:animal_kart_demo2/models/buffalo.dart';
+import 'package:animal_kart_demo2/utils/app_constants.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:http/http.dart' as http;
 
 class ApiServices {
   static Future<DeviceDetails> fetchDeviceDetails() async {
@@ -21,5 +25,18 @@ class ApiServices {
     }
 
     return const DeviceDetails(id: '', model: '');
+  }
+   static Future<Buffalo> fetchBuffaloById(String id) async {
+    final url =
+        '${AppConstants.apiUrl}/products/$id';
+
+    final res = await http.get(Uri.parse(url));
+
+    if (res.statusCode == 200) {
+      final data = json.decode(res.body);
+      return Buffalo.fromJson(data);
+    } else {
+      throw Exception("Failed to load buffalo details");
+    }
   }
 }
