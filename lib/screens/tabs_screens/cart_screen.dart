@@ -89,189 +89,189 @@ class CartScreen extends ConsumerWidget {
       ),
 
       // ---------- MAIN LIST ----------
-    // ---------- MAIN LIST ----------
-body: ListView(
-  padding: const EdgeInsets.all(16),
-  children: items.map((buff) {
-    final cartItem = cart[buff.id]!;
-    final qty = cartItem.qty;
 
-    final itemPrice = buff.price * qty;
-    final insurance = cartItem.insurancePaid;
+        body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: items.map((buff) {
+          final cartItem = cart[buff.id]!;
+          final qty = cartItem.qty;
 
-    final img = buff.buffaloImages.first;
-    final isNetwork = img.startsWith("http");
+          final itemPrice = buff.price * qty;
+          final insurance = cartItem.insurancePaid;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 22),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 10,
-            color: Colors.black.withOpacity(0.06),
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ------------------------------------------------
-          // TOP ROW : IMAGE + DETAILS + DELETE
-          // ------------------------------------------------
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: isNetwork
-                    ? Image.network(
-                        img,
-                        width: 110,
-                        height: 135,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        img,
-                        width: 110,
-                        height: 135,
-                        fit: BoxFit.cover,
-                      ),
-              ),
+          final img = buff.buffaloImages.first;
+          final isNetwork = img.startsWith("http");
 
-              const SizedBox(width: 14),
-
-              Expanded(
-                child: Column(
+          return Container(
+            margin: const EdgeInsets.only(bottom: 22),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.06),
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ------------------------------------------------
+                // TOP ROW : IMAGE + DETAILS + DELETE
+                // ------------------------------------------------
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      buff.breed,
-                      style: const TextStyle(
-                          fontSize: 19, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 3),
-
-                    Text(
-                      "Age: ${buff.age ?? '--'} yrs",
-                      style: TextStyle(
-                          fontSize: 14, color: Colors.grey.shade700),
-                    ),
-                    Text(
-                      "Quantity: $qty",
-                      style: TextStyle(
-                          fontSize: 14, color: Colors.grey.shade700),
-                    ),
-                    Text(
-                      "Milk Yield: ${buff.milkYield} L/day",
-                      style: TextStyle(
-                          fontSize: 14, color: Colors.grey.shade700),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: isNetwork
+                          ? Image.network(
+                              img,
+                              width: 110,
+                              height: 135,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              img,
+                              width: 110,
+                              height: 135,
+                              fit: BoxFit.cover,
+                            ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(width: 14),
 
-                    // ------------------ QTY BOX ------------------
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 26, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F5F2),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          GestureDetector(
-                            onTap: () => ref
-                                .read(cartProvider.notifier)
-                                .decrease(buff.id),
-                            child: const Icon(Icons.remove,
-                                size: 22, color: Colors.black),
-                          ),
-                          const SizedBox(width: 22),
                           Text(
-                            "$qty",
+                            buff.breed,
                             style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
+                                fontSize: 19, fontWeight: FontWeight.w700),
                           ),
-                          const SizedBox(width: 22),
-                          GestureDetector(
-                            onTap: () => ref
-                                .read(cartProvider.notifier)
-                                .increase(buff.id),
-                            child: const Icon(Icons.add,
-                                size: 22, color: Colors.black),
+                          const SizedBox(height: 3),
+
+                          Text(
+                            "Age: ${buff.age ?? '--'} yrs",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey.shade700),
+                          ),
+                          Text(
+                            "Quantity: $qty",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey.shade700),
+                          ),
+                          Text(
+                            "Milk Yield: ${buff.milkYield} L/day",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey.shade700),
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // ------------------ QTY BOX ------------------
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 26, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F5F2),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => ref
+                                      .read(cartProvider.notifier)
+                                      .decrease(buff.id),
+                                  child: const Icon(Icons.remove,
+                                      size: 22, color: Colors.black),
+                                ),
+                                const SizedBox(width: 22),
+                                Text(
+                                  "$qty",
+                                  style: const TextStyle(
+                                      fontSize: 17, fontWeight: FontWeight.w700),
+                                ),
+                                const SizedBox(width: 22),
+                                GestureDetector(
+                                  onTap: () => ref
+                                      .read(cartProvider.notifier)
+                                      .increase(buff.id),
+                                  child: const Icon(Icons.add,
+                                      size: 22, color: Colors.black),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
+
+                    // DELETE BUTTON
+                    GestureDetector(
+                      onTap: () => _confirmDelete(context, ref, buff.id),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.delete, color: Colors.red),
+                      ),
+                    ),
                   ],
                 ),
-              ),
 
-              // DELETE BUTTON
-              GestureDetector(
-                onTap: () => _confirmDelete(context, ref, buff.id),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
+                const SizedBox(height: 18),
+
+                // -------------------- NOTE BOX --------------------
+                Container(
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    shape: BoxShape.circle,
+                    color: const Color(0xFFE8F8FF),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(Icons.delete, color: Colors.red),
+                  child: const Text(
+                    "Note:\nIf you purchase 2 Murrah buffaloes you will receive insurance for the second buffalo completely Free",
+                    style: TextStyle(fontSize: 14, height: 1.5),
+                  ),
                 ),
-              ),
-            ],
-          ),
 
-          const SizedBox(height: 18),
+                const SizedBox(height: 18),
 
-          // -------------------- NOTE BOX --------------------
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8F8FF),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Text(
-              "Note:\nIf you purchase 2 Murrah buffaloes you will receive insurance for the second buffalo completely Free",
-              style: TextStyle(fontSize: 14, height: 1.5),
-            ),
-          ),
-
-          const SizedBox(height: 18),
-
-          // -------------------- INFO BOX --------------------
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5FDEB),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "What happens next?",
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: 10),
-                Text("✓ 12-day quarantine period begins",
-                    style: TextStyle(height: 1.5)),
-                Text("✓ Daily health monitoring updates",
-                    style: TextStyle(height: 1.5)),
-                Text("✓ Replacement guarantee if issues found",
-                    style: TextStyle(height: 1.5)),
-                Text("✓ GPS-tracked safe transport",
-                    style: TextStyle(height: 1.5)),
-                Text("✓ Complete documentation provided",
-                    style: TextStyle(height: 1.5)),
-              ],
-            ),
+                // -------------------- INFO BOX --------------------
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5FDEB),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "What happens next?",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(height: 10),
+                      Text("✓ 12-day quarantine period begins",
+                          style: TextStyle(height: 1.5)),
+                      Text("✓ Daily health monitoring updates",
+                          style: TextStyle(height: 1.5)),
+                      Text("✓ Replacement guarantee if issues found",
+                          style: TextStyle(height: 1.5)),
+                      Text("✓ GPS-tracked safe transport",
+                          style: TextStyle(height: 1.5)),
+                      Text("✓ Complete documentation provided",
+                          style: TextStyle(height: 1.5)),
+                    ],
+                  ),
           ),
 
           const SizedBox(height: 20),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
+import 'package:animal_kart_demo2/widgets/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
 
-    // 🔥 Auto-scroll every 2 seconds
+    
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (currentIndex < AppConstants.onboardingData.length - 1) {
         currentIndex++;
@@ -120,20 +121,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Text(
                             item.title,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: AppText.bold16
                           ),
                           const SizedBox(height: 12),
                           Text(
                             item.subtitle,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade700,
-                              height: 1.4,
-                            ),
+                            style: AppText.regular14
                           ),
                         ],
                       ),
