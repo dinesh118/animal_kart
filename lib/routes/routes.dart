@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:animal_kart_demo2/screens/splash_screen.dart';
-import 'package:animal_kart_demo2/screens/login_screen.dart';
-import 'package:animal_kart_demo2/screens/otp_screen.dart';
-import 'package:animal_kart_demo2/screens/profile_form_screen.dart';
+import 'package:animal_kart_demo2/auth/screens/login_screen.dart';
+import 'package:animal_kart_demo2/auth/screens/otp_screen.dart';
 import 'package:animal_kart_demo2/screens/home_screen.dart';
+import 'package:animal_kart_demo2/screens/onboarding/onboarding_screen.dart';
+import 'package:animal_kart_demo2/screens/onboarding/splash_screen.dart';
+import 'package:flutter/material.dart';
 
 class AppRoutes {
   static const String splash = '/';
+  static const String onBoardingScreen = '/onboarding_screen';
+
   static const String login = '/login';
   static const String otp = '/otp';
   static const String profileForm = '/profile-form';
@@ -16,23 +18,34 @@ class AppRoutes {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case onBoardingScreen:
+        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case otp:
-        return MaterialPageRoute(builder: (_) => const OtpScreen());
-      case profileForm:
-        final phoneNumber = settings.arguments as String? ?? '';
+        // final args = settings.arguments as Map<String, dynamic>?;
+        // final verificationId = args?['verificationId'] as String?;
+        // if (verificationId == null || verificationId.isEmpty) {
+        //   return _errorRoute('Missing verificationId for OTP screen');
+        // }
         return MaterialPageRoute(
-          builder: (_) => ProfileFormScreen(mobileNumber: phoneNumber),
+          builder: (_) => OtpScreen(verficationId: /* verificationId */ ""),
         );
+      // case profileForm:
+      //   final phoneNumber = settings.arguments as String? ?? '';
+      //   return MaterialPageRoute(
+      //     builder: (_) => ProfileFormScreen(mobileNumber: phoneNumber),
+      //   );
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('No route defined for ${settings.name}')),
-          ),
-        );
+        return _errorRoute('No route defined for ${settings.name}');
     }
+  }
+
+  static Route<dynamic> _errorRoute(String message) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(body: Center(child: Text(message))),
+    );
   }
 }

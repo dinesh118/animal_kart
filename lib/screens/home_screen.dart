@@ -14,10 +14,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    BuffaloListScreen(),
+    // BuffaloListScreen(),
     _SearchPage(),
-    CartScreen(),
-    UserProfileScreen(),
+    // CartScreen(),
+    // UserProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         title: const Text('AnimalKart'),
         actions: [
           IconButton(

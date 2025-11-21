@@ -1,0 +1,101 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:animal_kart_demo2/auth/models/user_details.dart';
+import 'package:animal_kart_demo2/network/api_services.dart';
+import 'package:animal_kart_demo2/utils/app_constants.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:http/http.dart' as http;
+
+final authProvider = ChangeNotifierProvider<AuthController>(
+  (ref) => AuthController(),
+);
+
+class AuthController extends ChangeNotifier {
+  //setters
+  bool _isLoading = false;
+
+  //getters
+  bool get isLoading => _isLoading;
+
+  // verfiy user
+  Future<bool> verifyUser(String phone) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final deviceDetails = await ApiServices.fetchDeviceDetails();
+      final response = await http.post(
+        Uri.parse("${AppConstants.verifyUserEndpoint}/verify"),
+        headers: {HttpHeaders.contentTypeHeader: AppConstants.applicationJson},
+        body: jsonEncode({
+          'mobile': phone,
+          'device_id': deviceDetails.id,
+          'device_model': deviceDetails.model,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        final bool isSuccess = data["status"] == "success";
+
+        return isSuccess;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateUserdata({
+    String? userId,
+    UserProfile? profile,
+    Map<String, dynamic>? extraFields,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final targetUserId = userId ?? profile?.id;
+      if (targetUserId == null || targetUserId.isEmpty) {
+        throw ArgumentError('userId or profile.id must be provided');
+      }
+
+      final payload = <String, dynamic>{};
+
+      if (profile != null) {
+        payload.addAll(profile.toUpdateJson());
+      }
+
+      if (extraFields != null && extraFields.isNotEmpty) {
+        payload.addAll(extraFields);
+      }
+
+      final response = await http.put(
+        Uri.parse("${AppConstants.verifyUserEndpoint}/id/$targetUserId"),
+        headers: {HttpHeaders.contentTypeHeader: AppConstants.applicationJson},
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        final bool isSuccess = data["status"] == "success";
+
+        return isSuccess;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+    return false;
+  }
+}
