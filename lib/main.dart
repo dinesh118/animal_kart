@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
       title: 'Animal Kart',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'SFProDisplay',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
