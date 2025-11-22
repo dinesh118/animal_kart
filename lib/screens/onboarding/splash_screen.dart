@@ -1,6 +1,7 @@
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/app_constants.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -15,9 +16,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    _navigateNext();
+  }
+
+  Future<void> _navigateNext() async {
+    await Future.delayed(const Duration(seconds: 3));
+    final prefs = await SharedPreferences.getInstance();
+    final isProfileCompleted = prefs.getBool('isProfileCompleted') ?? false;
+
+    if (!mounted) return;
+
+    if (isProfileCompleted) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
       Navigator.pushReplacementNamed(context, AppRoutes.onBoardingScreen);
-    });
+    }
   }
 
   @override

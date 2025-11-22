@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
 import 'routes/routes.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,12 @@ void main() async {
   if (kDebugMode) {
     FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true);
   }
+  // Configure App Check - use debug provider in development
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+  );
 
   runApp(const ProviderScope(child: OKToast(child: MyApp())));
 }

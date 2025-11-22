@@ -6,6 +6,7 @@ import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:animal_kart_demo2/widgets/custom_widgets.dart';
 
@@ -100,7 +101,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (aadhaarFront != null || aadhaarBack != null) {
       aadhaarUrls = await ref
           .read(userProfileProvider)
-          .saveAdharDetailsToDb(
+          .saveAadhaarDetailsToDb(
             aadhaarFront: aadhaarFront ?? aadhaarBack!,
             aadhaarBack: aadhaarBack,
             userId: userId,
@@ -126,15 +127,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       extraFields['aadhaar_back_url'] = aadhaarUrls['aadhaar_back_url'];
     }
 
-    // final success = await auth.updateUserdata(
-    //   userId: userId,
-    //   extraFields: extraFields,
-    // );
+    final success = await auth.updateUserdata(
+      userId: userId,
+      extraFields: extraFields,
+    );
 
     if (!mounted) return;
-    // if (success) {
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
-    // }
+    if (success) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isProfileCompleted', true);
+
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    }
   }
 
   @override
