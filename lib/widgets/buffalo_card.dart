@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:animal_kart_demo2/widgets/bufflo_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,24 +25,23 @@ class BuffaloCard extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => BuffaloDetailsScreen(buffaloId: buffalo.id, ),
+                  builder: (_) => BuffaloDetailsScreen(buffaloId: buffalo.id),
                 ),
               );
-
             },
       child: Opacity(
         opacity: disabled ? 0.4 : 1,
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: kCardBg,
+            color: Theme.of(context).lightThemeCardColor,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 blurRadius: 8,
                 offset: const Offset(0, 4),
                 color: Colors.black.withOpacity(0.06),
-              )
+              ),
             ],
           ),
           child: Column(
@@ -75,10 +75,12 @@ class BuffaloCard extends ConsumerWidget {
                     right: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: buffalo.inStock
-                            ? Colors.white
+                            ? akWhiteColor
                             : Colors.red.shade50,
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -96,7 +98,10 @@ class BuffaloCard extends ConsumerWidget {
 
               // ===================== DETAILS =====================
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -110,17 +115,20 @@ class BuffaloCard extends ConsumerWidget {
                             children: [
                               Text(
                                 buffalo.breed,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF111827),
+                                  color: Theme.of(context).primaryTextColor,
                                 ),
                               ),
                               const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  const Icon(Icons.local_drink,
-                                      size: 18, color: Colors.grey),
+                                  const Icon(
+                                    Icons.local_drink,
+                                    size: 18,
+                                    color: Colors.grey,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     "${buffalo.milkYield}L/day",
@@ -129,7 +137,7 @@ class BuffaloCard extends ConsumerWidget {
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey,
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ],
@@ -141,8 +149,11 @@ class BuffaloCard extends ConsumerWidget {
                         // Insurance Button
                         OutlinedButton.icon(
                           onPressed: () => _showInsuranceInfo(context),
-                          icon: const Icon(Icons.info_outline,
-                              size: 18, color: Colors.black),
+                          icon: const Icon(
+                            Icons.info_outline,
+                            size: 18,
+                            color: Colors.black,
+                          ),
                           label: const Text(
                             "Insurance Details",
                             style: TextStyle(
@@ -152,9 +163,13 @@ class BuffaloCard extends ConsumerWidget {
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF9FAFB),
+                            backgroundColor: Theme.of(context).isLightTheme
+                                ? Color(0xFFF9FAFB)
+                                : akLightBlueCardLightColor,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -205,12 +220,13 @@ class BuffaloCard extends ConsumerWidget {
                               ? null
                               : () {
                                   Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BuffaloDetailsScreen(buffaloId: buffalo.id),
-                                  ),
-                                );
-
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BuffaloDetailsScreen(
+                                        buffaloId: buffalo.id,
+                                      ),
+                                    ),
+                                  );
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryGreen,
@@ -218,7 +234,9 @@ class BuffaloCard extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 28, vertical: 14),
+                              horizontal: 28,
+                              vertical: 14,
+                            ),
                           ),
                           child: const Text(
                             "Add to Cart",
@@ -246,7 +264,7 @@ class BuffaloCard extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).mainThemeBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
@@ -278,10 +296,7 @@ class BuffaloCard extends ConsumerWidget {
             children: [
               const Text(
                 "Insurance Offer",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -306,12 +321,15 @@ class BuffaloCard extends ConsumerWidget {
               children: [
                 // Header Row
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
                   decoration: const BoxDecoration(
                     color: Color(0xFFDFF7ED),
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(18)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(18),
+                    ),
                   ),
                   child: Row(
                     children: const [
@@ -330,19 +348,25 @@ class BuffaloCard extends ConsumerWidget {
 
                 // Row 1
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   color: const Color(0xFF10B981),
                   child: Row(
                     children: const [
                       Expanded(
-                          child: Text("1",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white))),
+                        child: Text(
+                          "1",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
                       Expanded(
-                          child: Text("₹150,000",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white))),
+                        child: Text(
+                          "₹150,000",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
                       Expanded(
                         child: Text(
                           "₹13,000",
@@ -356,19 +380,24 @@ class BuffaloCard extends ConsumerWidget {
 
                 // Row 2
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   decoration: const BoxDecoration(
                     color: Color(0xFFF4FFFA),
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(18)),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(18),
+                    ),
                   ),
                   child: Row(
                     children: const [
-                      Expanded(child: Text("2", style: TextStyle(fontSize: 14))),
                       Expanded(
-                          child: Text("₹150,000",
-                              style: TextStyle(fontSize: 14))),
+                        child: Text("2", style: TextStyle(fontSize: 14)),
+                      ),
+                      Expanded(
+                        child: Text("₹150,000", style: TextStyle(fontSize: 14)),
+                      ),
                       Expanded(
                         child: Text(
                           "Free",
@@ -393,7 +422,9 @@ class BuffaloCard extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFFEFFFF7),
+              color: Theme.of(context).isLightTheme
+                  ? const Color(0xFFEFFFF7)
+                  : akLightBlueCardDarkColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Text(
@@ -410,7 +441,4 @@ class BuffaloCard extends ConsumerWidget {
 }
 
 // Header Style Constant
-const _headerStyle = TextStyle(
-  fontSize: 14,
-  fontWeight: FontWeight.w600,
-);
+const _headerStyle = TextStyle(fontSize: 14, fontWeight: FontWeight.w600);

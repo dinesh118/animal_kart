@@ -79,19 +79,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    print("========= USER DATA =========");
-    print("Phone Number: ${widget.phoneNumberFromLogin}");
-    print("Email: ${emailCtrl.text}");
-    print("First Name: ${firstNameCtrl.text}");
-    print("Last Name: ${lastNameCtrl.text}");
-    print("Gender: $gender");
-    print("Occupation: ${occupationCtrl.text}");
-    print("DOB: ${dobCtrl.text}");
-    print("Address: ${addressCtrl.text}");
-    print("Aadhaar: ${aadhaarCtrl.text}");
-    print("Aadhaar Front: ${aadhaarFront?.path}");
-    print("Aadhaar Back: ${aadhaarBack?.path}");
-    print("==============================");
+    // print("========= USER DATA =========");
+    // print("Phone Number: ${widget.phoneNumberFromLogin}");
+    // print("Email: ${emailCtrl.text}");
+    // print("First Name: ${firstNameCtrl.text}");
+    // print("Last Name: ${lastNameCtrl.text}");
+    // print("Gender: $gender");
+    // print("Occupation: ${occupationCtrl.text}");
+    // print("DOB: ${dobCtrl.text}");
+    // print("Address: ${addressCtrl.text}");
+    // print("Aadhaar: ${aadhaarCtrl.text}");
+    // print("Aadhaar Front: ${aadhaarFront?.path}");
+    // print("Aadhaar Back: ${aadhaarBack?.path}");
+    // print("==============================");
 
     final auth = ref.read(authProvider);
     final userId = auth.userProfile?.id ?? widget.phoneNumberFromLogin;
@@ -113,18 +113,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       'email': emailCtrl.text.trim(),
       'address': addressCtrl.text.trim(),
       'occupation': occupationCtrl.text.trim(),
-      'custom_fields': {
-        'gender': gender,
-        'dob': dobCtrl.text.trim(),
-        'aadhaar': aadhaarCtrl.text.trim(),
-      },
+      'isFormFilled': true,
+      'gender': gender,
+      'dob': dobCtrl.text.trim(),
+      'aadhar_number': int.tryParse(aadhaarCtrl.text.trim()),
+      'first_name': "${firstNameCtrl.text} ",
+      "last_name": lastNameCtrl.text,
     };
 
-    if (aadhaarUrls['aadhaar_front_url'] != null) {
-      extraFields['aadhaar_front_url'] = aadhaarUrls['aadhaar_front_url'];
+    if (aadhaarUrls['aadhar_front_image_url'] != null) {
+      extraFields['aadhar_front_image_url'] = aadhaarUrls['aadhaar_front_url'];
     }
-    if (aadhaarUrls['aadhaar_back_url'] != null) {
-      extraFields['aadhaar_back_url'] = aadhaarUrls['aadhaar_back_url'];
+    if (aadhaarUrls['aadhar_back_image_url'] != null) {
+      extraFields['aadhar_back_image_url'] = aadhaarUrls['aadhaar_back_url'];
     }
 
     final success = await auth.updateUserdata(

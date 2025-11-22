@@ -47,6 +47,7 @@ class AuthController extends ChangeNotifier {
           _userProfile = UserProfile.fromJson(
             data["user"] as Map<String, dynamic>,
           );
+          print(_userProfile);
         }
 
         return isSuccess;

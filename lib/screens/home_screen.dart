@@ -1,10 +1,11 @@
-
 import 'package:animal_kart_demo2/controllers/cart_provider.dart';
 import 'package:animal_kart_demo2/screens/tabs_screens/buffalo_list_screen.dart';
 import 'package:animal_kart_demo2/screens/tabs_screens/cart_screen.dart';
 import 'package:animal_kart_demo2/screens/tabs_screens/user_profile_screen.dart';
 import 'package:animal_kart_demo2/screens/tabs_screens/wishlist_screen.dart';
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:animal_kart_demo2/widgets/theme_toggle_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _pages = const [
       BuffaloListScreen(),
       WishlistScreen(),
-      CartScreen(showAppBar: false),  // <- AppBar handled inside CartScreen
+      CartScreen(showAppBar: false), // <- AppBar handled inside CartScreen
       UserProfileScreen(),
     ];
   }
@@ -41,44 +42,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final cart = ref.watch(cartProvider);
 
     return Scaffold(
-      backgroundColor: kScreenBg,
+      backgroundColor: Theme.of(context).mainThemeColor,
 
       // ---- CONDITIONAL APPBAR ----
-      appBar: 
-           AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: kPrimaryGreen,
-              elevation: 0,
-              toolbarHeight: 90,
-              shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(30)),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).isLightTheme
+            ? kPrimaryDarkColor
+            : akDialogBackgroundColor,
+        elevation: 0,
+        toolbarHeight: 90,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        ),
+        title: Row(
+          children: [
+            Image.asset('assets/images/onboard_logo.png', height: 50),
+            const SizedBox(width: 8),
+          ],
+        ),
+        actions: [
+          ThemeToggleButton(),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white24,
               ),
-              title: Row(
-                children: [
-                  Image.asset('assets/images/onboard_logo.png', height: 50),
-                  const SizedBox(width: 8),
-                ],
+              child: IconButton(
+                icon: const Icon(Icons.notifications_none, color: Colors.white),
+                onPressed: () {},
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white24,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.notifications_none,
-                          color: Colors.white),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-              ],
             ),
+          ),
+        ],
+      ),
 
       body: _pages[_selectedIndex],
 
@@ -88,14 +89,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).isLightTheme
+                ? kCardBg
+                : akDialogBackgroundColor,
             borderRadius: BorderRadius.circular(40),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 6,
                 offset: const Offset(0, 3),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -108,9 +111,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   _navItem(
-                      index: 2,
-                      icon: Icons.shopping_bag_outlined,
-                      label: "My Cart"),
+                    index: 2,
+                    icon: Icons.shopping_bag_outlined,
+                    label: "My Cart",
+                  ),
                   if (cart.isNotEmpty)
                     Positioned(
                       right: -6,
@@ -118,13 +122,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         decoration: const BoxDecoration(
-                            color: Colors.red, shape: BoxShape.circle),
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
                         child: Text(
                           cart.length.toString(),
                           style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                            fontSize: 11,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -173,17 +180,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             child: Row(
               children: [
-                Icon(icon,
-                    size: 26,
-                    color:
-                        isSelected ? Colors.black : Colors.grey.shade700),
+                Icon(
+                  icon,
+                  size: 26,
+                  color: isSelected ? Colors.black : Colors.grey.shade700,
+                ),
                 if (isSelected) ...[
                   const SizedBox(width: 8),
-                  Text(label,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -193,4 +204,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-

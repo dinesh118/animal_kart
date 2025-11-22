@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -14,22 +15,19 @@ class UserProfileScreen extends StatelessWidget {
     const String aadhar = "7966*****";
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Theme.of(context).mainThemeBgColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
-
-            
-           
-
             const SizedBox(height: 20),
 
             // ---------- PERSONAL INFORMATION ----------
             _infoCard(
+              context,
               title: "Personal Information",
               items: const {
-                "Name":userName,
-                "number":phoneNumber,
+                "Name": userName,
+                "number": phoneNumber,
                 "Email ID": email,
                 "Gender": gender,
                 "Date of Birth": dob,
@@ -40,10 +38,9 @@ class UserProfileScreen extends StatelessWidget {
 
             // ---------- AADHAAR ----------
             _infoCard(
+              context,
               title: "Aadhaar Card Number",
-              items: const {
-                "": aadhar,
-              },
+              items: const {"": aadhar},
             ),
 
             const SizedBox(height: 40),
@@ -83,7 +80,8 @@ class UserProfileScreen extends StatelessWidget {
 // ---------------------------------------------
 // REUSABLE CARD WIDGET
 // ---------------------------------------------
-Widget _infoCard({
+Widget _infoCard(
+  context, {
   required String title,
   required Map<String, String> items,
 }) {
@@ -92,7 +90,7 @@ Widget _infoCard({
     padding: const EdgeInsets.all(18),
     width: double.infinity,
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).lightThemeCardColor,
       borderRadius: BorderRadius.circular(18),
       boxShadow: [
         BoxShadow(
@@ -107,10 +105,7 @@ Widget _infoCard({
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 12),
 
@@ -123,10 +118,7 @@ Widget _infoCard({
                 if (e.key.isNotEmpty)
                   Text(
                     e.key,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                   ),
                 const SizedBox(height: 4),
                 Text(

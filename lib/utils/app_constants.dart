@@ -1,5 +1,9 @@
 import 'package:animal_kart_demo2/models/onboarding_data.dart';
 
+const String kRobotoBold = 'RobotoBold';
+const String kRoboto = 'Roboto';
+const String kRobotoMedium = 'RobotoMedium';
+
 class AppConstants {
   //common Constants
   static Duration kToastAnimDuration = Duration(milliseconds: 600);

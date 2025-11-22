@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:animal_kart_demo2/controllers/cart_provider.dart';
 import 'package:animal_kart_demo2/controllers/buffalo_details_provider.dart';
 import 'package:animal_kart_demo2/screens/tabs_screens/cart_screen.dart';
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +17,9 @@ class BuffaloDetailsScreen extends ConsumerStatefulWidget {
       _BuffaloDetailsScreenState();
 }
 
-class _BuffaloDetailsScreenState
-    extends ConsumerState<BuffaloDetailsScreen> {
+class _BuffaloDetailsScreenState extends ConsumerState<BuffaloDetailsScreen> {
   int qty = 1;
   bool isFavorite = false;
-
 
   late PageController _pageController;
   int currentIndex = 0;
@@ -34,9 +33,7 @@ class _BuffaloDetailsScreenState
 
   void autoScroll() {
     if (!mounted) return;
-    final buffaloAsync = ref.read(
-      buffaloDetailsProvider(widget.buffaloId),
-    );
+    final buffaloAsync = ref.read(buffaloDetailsProvider(widget.buffaloId));
     if (!buffaloAsync.hasValue) return;
 
     final imageList = buffaloAsync.value!.buffaloImages;
@@ -55,148 +52,162 @@ class _BuffaloDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
-    final buffaloAsync =
-        ref.watch(buffaloDetailsProvider(widget.buffaloId));
+    final buffaloAsync = ref.watch(buffaloDetailsProvider(widget.buffaloId));
 
     return buffaloAsync.when(
       loading: () => Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: kPrimaryGreen),
-        ),
+        body: Center(child: CircularProgressIndicator(color: kPrimaryGreen)),
       ),
 
-      error: (err, st) => Scaffold(
-        body: Center(child: Text("Error: $err")),
-      ),
+      error: (err, st) => Scaffold(body: Center(child: Text("Error: $err"))),
 
       data: (buffalo) {
         final imageList = buffalo.buffaloImages;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).mainThemeBgColor,
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
+            backgroundColor: Theme.of(context).mainThemeBgColor,
+            elevation: 2,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Theme.of(context).primaryTextColor,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text("Buffalo Details",
-                style: TextStyle(color: Colors.black)),
+            title: Text(
+              "Buffalo Details",
+              style: TextStyle(color: Theme.of(context).primaryTextColor),
+            ),
           ),
 
           body: Column(
             children: [
               const SizedBox(height: 8),
-            
+
               Expanded(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-          ),
-          padding: const EdgeInsets.only(bottom: 20),
-
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-
-              // ---------------------- IMAGE CAROUSEL ----------------------
-              SizedBox(
-                height: 350,
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    PageView.builder(
-                      controller: _pageController,
-                      itemCount: imageList.length,
-                      onPageChanged: (i) => setState(() => currentIndex = i),
-                      itemBuilder: (_, index) {
-                        final img = imageList[index];
-                        final isNetwork = img.startsWith("http");
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: isNetwork
-                                ? Image.network(img,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity)
-                                : Image.asset(img,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity),
-                          ),
-                        );
-                      },
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22),
                     ),
-                   
+                    padding: const EdgeInsets.only(bottom: 20),
 
-                    // DOT INDICATORS
-                    Positioned(
-                      bottom: 12,
-                      child: Row(
-                        children: List.generate(
-                          imageList.length,
-                          (index) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: currentIndex == index ? 22 : 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: currentIndex == index
-                                  ? Colors.white
-                                  : Colors.white54,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+
+                        // ---------------------- IMAGE CAROUSEL ----------------------
+                        SizedBox(
+                          height: 350,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              PageView.builder(
+                                controller: _pageController,
+                                itemCount: imageList.length,
+                                onPageChanged: (i) =>
+                                    setState(() => currentIndex = i),
+                                itemBuilder: (_, index) {
+                                  final img = imageList[index];
+                                  final isNetwork = img.startsWith("http");
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(22),
+                                      child: isNetwork
+                                          ? Image.network(
+                                              img,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                            )
+                                          : Image.asset(
+                                              img,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                            ),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              // DOT INDICATORS
+                              Positioned(
+                                bottom: 12,
+                                child: Row(
+                                  children: List.generate(
+                                    imageList.length,
+                                    (index) => AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      width: currentIndex == index ? 22 : 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: currentIndex == index
+                                            ? Colors.white
+                                            : Colors.white54,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+
+                        const SizedBox(height: 22),
+
+                        // ---------------------- TEXT DETAILS ----------------------
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                buffalo.breed,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              Text(
+                                buffalo.description,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  height: 1.5,
+                                  color: Theme.of(context).isLightTheme
+                                      ? Colors.black87
+                                      : akWhiteColor54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-
-              const SizedBox(height: 22),
-
-              // ---------------------- TEXT DETAILS ----------------------
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      buffalo.breed,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Text(
-                      buffalo.description,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        height: 1.5,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 12),
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).mainThemeBgColor,
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 8,
@@ -210,7 +221,9 @@ class _BuffaloDetailsScreenState
                     // QTY SELECTOR
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF7FDF8),
                         borderRadius: BorderRadius.circular(30),
@@ -221,12 +234,14 @@ class _BuffaloDetailsScreenState
                             if (qty > 1) setState(() => qty--);
                           }),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text("$qty",
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              "$qty",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           _qtyButton(Icons.add, () {
                             setState(() => qty++);
@@ -241,12 +256,16 @@ class _BuffaloDetailsScreenState
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          ref.read(cartProvider.notifier).setItem(
-                                buffalo.id,
-                                qty,
-                                buffalo.insurance,
-                              );
-                              Navigator.push( context, MaterialPageRoute( builder: (_) => const CartScreen(showAppBar: true), ), );
+                          ref
+                              .read(cartProvider.notifier)
+                              .setItem(buffalo.id, qty, buffalo.insurance);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const CartScreen(showAppBar: true),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kPrimaryGreen,
@@ -255,14 +274,15 @@ class _BuffaloDetailsScreenState
                           ),
                         ),
                         child: Text(
-                          "₹${buffalo.price*qty}",
+                          "₹${buffalo.price * qty}",
                           style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -279,8 +299,8 @@ class _BuffaloDetailsScreenState
       child: Container(
         width: 32,
         height: 32,
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).mainThemeBgColor,
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: 20),

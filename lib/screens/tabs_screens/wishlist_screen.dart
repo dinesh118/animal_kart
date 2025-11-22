@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class WishlistScreen extends StatefulWidget {
@@ -12,15 +13,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
     {
       "img": "https://storage.googleapis.com/markwave-kart/img1.jpeg",
       "name": "Murrah Buffalo",
-      "price": 105000
+      "price": 105000,
     },
-   
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).mainThemeBgColor,
 
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -76,7 +76,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
     );
   }
 
-
   Widget _wishlistCard({
     required String img,
     required String name,
@@ -86,20 +85,19 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).lightThemeCardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             blurRadius: 8,
             offset: const Offset(0, 4),
             color: Colors.black.withOpacity(0.06),
-          )
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         
           Stack(
             children: [
               ClipRRect(
@@ -126,7 +124,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       color: Colors.black.withOpacity(0.55),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -155,10 +157,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               "₹$price",
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),
 

@@ -1,5 +1,6 @@
 import 'package:animal_kart_demo2/controllers/buffalo_provider.dart';
 import 'package:animal_kart_demo2/controllers/cart_provider.dart';
+import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,9 +15,8 @@ class CartScreen extends ConsumerWidget {
     final buffaloAsync = ref.watch(buffaloListProvider);
 
     return buffaloAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
 
       error: (err, _) => Scaffold(
         body: Center(
@@ -29,19 +29,20 @@ class CartScreen extends ConsumerWidget {
       ),
 
       data: (buffaloList) {
-        final items =
-            buffaloList.where((b) => cart.containsKey(b.id)).toList();
+        final items = buffaloList.where((b) => cart.containsKey(b.id)).toList();
 
         if (items.isEmpty) {
           return Scaffold(
             appBar: showAppBar
                 ? AppBar(
-                    elevation: 0,
-                    backgroundColor: Colors.white,
+                    elevation: 2,
+                    backgroundColor: Theme.of(context).mainThemeBgColor,
                     toolbarHeight: 48,
                     leading: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new,
-                          color: Colors.black),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.black,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     title: const Text(
@@ -53,31 +54,33 @@ class CartScreen extends ConsumerWidget {
                       ),
                     ),
                     shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(30)),
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(30),
+                      ),
                     ),
                   )
                 : null,
             body: const Center(
-              child: Text(
-                "Your cart is empty",
-                style: TextStyle(fontSize: 18),
-              ),
+              child: Text("Your cart is empty", style: TextStyle(fontSize: 18)),
             ),
           );
         }
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8F8F8),
+          backgroundColor: Theme.of(context).isLightTheme
+              ? const Color(0xFFF8F8F8)
+              : akDarkThemeBackgroundColor,
 
           appBar: showAppBar
               ? AppBar(
-                  elevation: 0,
-                  backgroundColor: Colors.white,
+                  elevation: 2,
+                  backgroundColor: Theme.of(context).mainThemeBgColor,
                   toolbarHeight: 48,
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new,
-                        color: Colors.black),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.black,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   title: const Text(
@@ -89,16 +92,17 @@ class CartScreen extends ConsumerWidget {
                     ),
                   ),
                   shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(30)),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(30),
+                    ),
                   ),
                 )
               : null,
 
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
             child: SizedBox(
@@ -138,7 +142,7 @@ class CartScreen extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 22),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).lightThemeCardColor,
                   borderRadius: BorderRadius.circular(22),
                   boxShadow: [
                     BoxShadow(
@@ -180,29 +184,41 @@ class CartScreen extends ConsumerWidget {
                               Text(
                                 buff.breed,
                                 style: const TextStyle(
-                                    fontSize: 19,
-                                    fontWeight: FontWeight.w700),
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               const SizedBox(height: 3),
 
-                              Text("Age: ${buff.age ?? '--'} yrs",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade700)),
-                              Text("Quantity: $qty",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade700)),
-                              Text("Milk Yield: ${buff.milkYield} L/day",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade700)),
+                              Text(
+                                "Age: ${buff.age ?? '--'} yrs",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              Text(
+                                "Quantity: $qty",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              Text(
+                                "Milk Yield: ${buff.milkYield} L/day",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
 
                               const SizedBox(height: 10),
 
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 26, vertical: 6),
+                                  horizontal: 26,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF3F5F2),
                                   borderRadius: BorderRadius.circular(30),
@@ -214,23 +230,30 @@ class CartScreen extends ConsumerWidget {
                                       onTap: () => ref
                                           .read(cartProvider.notifier)
                                           .decrease(buff.id),
-                                      child: const Icon(Icons.remove,
-                                          size: 22, color: Colors.black),
+                                      child: const Icon(
+                                        Icons.remove,
+                                        size: 22,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                     const SizedBox(width: 22),
                                     Text(
                                       "$qty",
                                       style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w700),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                     const SizedBox(width: 22),
                                     GestureDetector(
                                       onTap: () => ref
                                           .read(cartProvider.notifier)
                                           .increase(buff.id),
-                                      child: const Icon(Icons.add,
-                                          size: 22, color: Colors.black),
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 22,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -240,16 +263,14 @@ class CartScreen extends ConsumerWidget {
                         ),
 
                         GestureDetector(
-                          onTap: () =>
-                              _confirmDelete(context, ref, buff.id),
+                          onTap: () => _confirmDelete(context, ref, buff.id),
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.delete,
-                                color: Colors.red),
+                            child: const Icon(Icons.delete, color: Colors.red),
                           ),
                         ),
                       ],
@@ -280,10 +301,13 @@ class CartScreen extends ConsumerWidget {
                       child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("What happens next?",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700)),
+                          Text(
+                            "What happens next?",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           SizedBox(height: 10),
                           Text("✓ 12-day quarantine period begins"),
                           Text("✓ Daily health monitoring updates"),
@@ -299,9 +323,10 @@ class CartScreen extends ConsumerWidget {
                     const Text(
                       "Price Breakdown",
                       style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
                     ),
 
                     const SizedBox(height: 14),
@@ -309,9 +334,11 @@ class CartScreen extends ConsumerWidget {
                     const SizedBox(height: 6),
                     _priceRow("Insurance:", "₹$insurance"),
                     const Divider(height: 30),
-                    _priceRow("Sub Total",
-                        "₹${itemPrice + insurance}",
-                        isBold: true),
+                    _priceRow(
+                      "Sub Total",
+                      "₹${itemPrice + insurance}",
+                      isBold: true,
+                    ),
                   ],
                 ),
               );
@@ -326,16 +353,20 @@ class CartScreen extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-            )),
-        Text(value,
-            style: TextStyle(
-              fontSize: isBold ? 19 : 15,
-              fontWeight: isBold ? FontWeight.w800 : FontWeight.w600,
-            )),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: isBold ? 19 : 15,
+            fontWeight: isBold ? FontWeight.w800 : FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -363,8 +394,7 @@ void _confirmDelete(BuildContext context, WidgetRef ref, String id) {
               const SizedBox(height: 5),
               const Text(
                 "Message",
-                style:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
 
@@ -398,8 +428,9 @@ void _confirmDelete(BuildContext context, WidgetRef ref, String id) {
                     child: const Text(
                       "Yes",
                       style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
 
@@ -418,12 +449,13 @@ void _confirmDelete(BuildContext context, WidgetRef ref, String id) {
                     child: const Text(
                       "No",
                       style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
