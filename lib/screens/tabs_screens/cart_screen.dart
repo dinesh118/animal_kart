@@ -32,19 +32,71 @@ class CartScreen extends ConsumerWidget {
 
         if (items.isEmpty) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Cart")),
-            body: const Center(child: Text("Your cart is empty")),
+            appBar:
+                showAppBar
+                    ? AppBar(
+                      elevation: 2,
+                      backgroundColor: Theme.of(context).mainThemeBgColor,
+                      toolbarHeight: 48,
+                      leading: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Colors.black,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      title: const Text(
+                        "Cart",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22,
+                          color: Colors.black,
+                        ),
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                        ),
+                      ),
+                    )
+                    : null,
+            body: const Center(
+              child: Text("Your cart is empty", style: TextStyle(fontSize: 18)),
+            ),
           );
         }
 
+
         return Scaffold(
           backgroundColor: Theme.of(context).mainThemeBgColor,
-
-          appBar: AppBar(
-            elevation: 2,
-            title: const Text("Cart"),
-            backgroundColor: Theme.of(context).mainThemeBgColor,
-          ),
+           appBar:
+              showAppBar
+                  ? AppBar(
+                    elevation: 2,
+                    backgroundColor: Theme.of(context).mainThemeBgColor,
+                    toolbarHeight: 48,
+                    leading: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.black,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    title: const Text(
+                      "Cart",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        color: Colors.black,
+                      ),
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(30),
+                      ),
+                    ),
+                  )
+                  : null,
 
           bottomNavigationBar: _checkoutButton(context, ref, items, cart),
 
@@ -115,9 +167,6 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  // ===============================================================
-  // CARD CONTENT
-  // ===============================================================
   Widget _buildCardContent(
     BuildContext context,
     WidgetRef ref,
