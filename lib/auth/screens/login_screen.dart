@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
 import 'package:animal_kart_demo2/widgets/floating_toast.dart';
@@ -17,11 +18,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool isButtonEnabled = false;
   bool _isSendingOtp = false;
 
-  // ✅ STATIC VALUES
-  final String staticPhone = "6305625580";
-  final String staticOtp = "123456";
 
-  // ---------------- VALIDATION ----------------
+
+ 
   bool isValidPhone(String value) {
     return RegExp(r'^[0-9]{10}$').hasMatch(value);
   }
@@ -52,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const SizedBox(height: 40),
 
-                // ---------------- HEADER ----------------
+               
                 const Center(
                   child: Text(
                     "Back to the Buffalo Cart\nworld!",
@@ -150,11 +149,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       size: 18,
                       color: Colors.grey.shade600,
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      "Static OTP: 123456",
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
+                   
                   ],
                 ),
 
@@ -166,40 +161,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: isButtonEnabled && !_isSendingOtp
-                        ? () async {
-                            setState(() => _isSendingOtp = true);
+                      ? () async {
+                          setState(() => _isSendingOtp = true);
 
-                            await Future.delayed(const Duration(seconds: 1));
+                          final enteredPhone = phoneController.text.trim();
 
-                            final enteredPhone =
-                                phoneController.text.trim();
+                          // ✅ CALL REAL WHATSAPP OTP API
+                          final success = await ref
+                              .read(authProvider)
+                              .sendWhatsappOtp(enteredPhone);
 
-                            // ✅ PHONE VALIDATION
-                            if (enteredPhone != staticPhone) {
-                              FloatingToast.showSimpleToast(
-                                  "Invalid mobile number");
-                              setState(() => _isSendingOtp = false);
-                              return;
-                            }
+                          if (!mounted) return;
 
+                          if (success) {
                             FloatingToast.showSimpleToast(
-                                "OTP is $staticOtp");
+                                "OTP sent via WhatsApp");
 
-                            if (!mounted) return;
-
-                            // ✅ PASS PHONE TO OTP SCREEN
+                            // ✅ NAVIGATE TO OTP SCREEN
                             Navigator.pushNamed(
                               context,
                               AppRoutes.otp,
                               arguments: {
                                 'phoneNumber': enteredPhone,
-                                'staticOtp': staticOtp,
                               },
                             );
-
-                            setState(() => _isSendingOtp = false);
+                          } else {
+                            FloatingToast.showSimpleToast(
+                                "Failed to send OTP");
                           }
-                        : null,
+
+                          setState(() => _isSendingOtp = false);
+                        }
+                      : null,
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isButtonEnabled
                           ? const Color(0xFF57BE82)

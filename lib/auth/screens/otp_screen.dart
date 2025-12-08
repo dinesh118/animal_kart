@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/widgets/floating_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -27,7 +29,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   bool _isVerifying = false;
 
  
-  final String staticOtp = "123456";
 
   @override
   void initState() {
@@ -65,7 +66,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ----- BACK BUTTON -----
+             
               IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new),
                 onPressed: () => Navigator.pop(context),
@@ -73,7 +74,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
               const SizedBox(height: 10),
 
-              // ✅ PHONE NUMBER DISPLAY
+             
               RichText(
                 text: TextSpan(
                   style: const TextStyle(
@@ -98,7 +99,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
               const SizedBox(height: 30),
 
-              // ---- OTP INPUT ----
+              
               Center(
                 child: Pinput(
                   controller: otpController,
@@ -113,15 +114,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               ),
 
               const SizedBox(height: 10),
-
-              // ✅ STATIC OTP DISPLAY (DEBUG MODE)
-              Center(
-                child: Text(
-                  "Static OTP: 123456",
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-              ),
-
+            
               const Spacer(),
 
              
@@ -130,33 +123,36 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: isOtpValid && !_isVerifying
-                      ? () async {
-                          setState(() => _isVerifying = true);
-
-                          await Future.delayed(
-                            const Duration(milliseconds: 800),
+                  ? () async {
+                      setState(() => _isVerifying = true);
+                      final enteredOtp = otpController.text.trim();
+                      final success = await ref
+                          .read(authProvider)
+                          .verifyWhatsappOtp(
+                            phone: widget.phoneNumber,
+                            otp: enteredOtp,
                           );
 
-                          // ✅ OTP VERIFICATION
-                          if (otpController.text.trim() != staticOtp) {
-                            FloatingToast.showSimpleToast("Invalid OTP");
-                            setState(() => _isVerifying = false);
-                            return;
-                          }
+                      if (!mounted) return;
 
-                          FloatingToast.showSimpleToast(
-                            "Login Successful",
-                          );
+                      if (success) {
+                        FloatingToast.showSimpleToast(
+                          "OTP Verified Successfully",
+                        );
+                        final prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool('isLoggedIn', true);
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.home,
+                        );
+                      } else {
+                        FloatingToast.showSimpleToast("Invalid OTP");
+                      }
 
-                          if (!mounted) return;
+                      setState(() => _isVerifying = false);
+                    }
+                  : null,
 
-                          // ✅ NAVIGATE TO HOME USING ROUTE
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.home,
-                          );
-                        }
-                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isOtpValid
                         ? const Color(0xFF57BE82)

@@ -55,4 +55,63 @@ class ApiServices {
       throw Exception("Failed to load buffalo list");
     }
   }
+
+
+  //send whatsapp otp
+  static Future<bool> sendWhatsappOtp(String phone) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+          "https://markwave-live-apis-couipk45fa-el.a.run.app/otp/send-whatsapp",
+        ),
+        headers: {
+          HttpHeaders.contentTypeHeader: AppConstants.applicationJson,
+        },
+        body: jsonEncode({
+          "mobile": phone,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data["status"] == "success";
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+  //verify whatsapp otp
+
+  static Future<bool> verifyWhatsappOtp({
+    required String phone,
+    required String otp,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+          "https://markwave-live-apis-couipk45fa-el.a.run.app/otp/verify",
+        ),
+        headers: {
+          HttpHeaders.contentTypeHeader: AppConstants.applicationJson,
+        },
+        body: jsonEncode({
+          "mobile": phone,
+          "otp": otp,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data["status"] == "success";
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+
 }

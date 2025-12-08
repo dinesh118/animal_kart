@@ -34,11 +34,6 @@ class BiometricService {
       // Authenticate
       final didAuthenticate = await _auth.authenticate(
         localizedReason: 'Verify your fingerprint to continue',
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: false,
-          useErrorDialogs: true,
-        ),
       );
       
       return didAuthenticate;

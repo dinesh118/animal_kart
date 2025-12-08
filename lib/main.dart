@@ -20,25 +20,23 @@ import 'l10n/locale_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
 
-  // Prevent duplicate Firebase initialization
+ 
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
 
-  // Only disable verification for testing in debug mode
-  // Remove this for production builds to receive real OTPs
+  
   if (kDebugMode) {
-    // Comment out this line for production builds
+    
     FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
   }
 
-  // Configure App Check - use debug provider in development
+ 
   await FirebaseAppCheck.instance.activate(
     androidProvider: kDebugMode
         ? AndroidProvider.debug

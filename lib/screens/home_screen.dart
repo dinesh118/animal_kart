@@ -26,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
      _requestNotificationPermission();
-    NotificationService().initNotifications();
+  NotificationService().initNotifications();
     
     _pages = const [
       BuffaloListScreen(),
