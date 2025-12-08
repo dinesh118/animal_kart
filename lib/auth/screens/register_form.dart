@@ -72,7 +72,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     children: [
                       const Text(
                         "Register Your Account !",
-                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       const Text(
@@ -85,7 +88,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       // CONTACT SECTION
                       const Text(
                         "Contact Information",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Card(
                         color: akWhiteColor,
@@ -108,7 +114,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               Container(
                                 height: 55,
                                 alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
                                 decoration: BoxDecoration(
                                   color: kFieldBg,
                                   borderRadius: BorderRadius.circular(12),
@@ -135,8 +143,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               TextFormField(
                                 controller: emailCtrl,
                                 decoration: fieldDeco("Email ID"),
-                                validator: (v) =>
-                                    v!.contains("@") ? null : "Enter a valid email",
+                                validator: (v) => v!.contains("@")
+                                    ? null
+                                    : "Enter a valid email",
                               ),
                             ],
                           ),
@@ -148,7 +157,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       // PERSONAL SECTION
                       const Text(
                         "Personal Information",
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Card(
@@ -170,7 +182,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               TextFormField(
                                 controller: firstNameCtrl,
                                 decoration: fieldDeco("First Name"),
-                                validator: (v) => v!.isEmpty ? "Required" : null,
+                                validator: (v) =>
+                                    v!.isEmpty ? "Required" : null,
                               ),
                               const SizedBox(height: 15),
                               const Text(
@@ -184,7 +197,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               TextFormField(
                                 controller: lastNameCtrl,
                                 decoration: fieldDeco("Family Name"),
-                                validator: (v) => v!.isEmpty ? "Required" : null,
+                                validator: (v) =>
+                                    v!.isEmpty ? "Required" : null,
                               ),
 
                               const SizedBox(height: 20),
@@ -195,17 +209,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   genderButton(
                                     label: "Male",
                                     selectedGender: gender,
-                                    onChanged: (val) => setState(() => gender = val),
+                                    onChanged: (val) =>
+                                        setState(() => gender = val),
                                   ),
                                   genderButton(
                                     label: "Female",
                                     selectedGender: gender,
-                                    onChanged: (val) => setState(() => gender = val),
+                                    onChanged: (val) =>
+                                        setState(() => gender = val),
                                   ),
                                   genderButton(
                                     label: "Others",
                                     selectedGender: gender,
-                                    onChanged: (val) => setState(() => gender = val),
+                                    onChanged: (val) =>
+                                        setState(() => gender = val),
                                   ),
                                 ],
                               ),
@@ -243,7 +260,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     onPressed: selectDOB,
                                   ),
                                 ),
-                                validator: (v) => v!.isEmpty ? "Select DOB" : null,
+                                validator: (v) =>
+                                    v!.isEmpty ? "Select DOB" : null,
                               ),
                             ],
                           ),
@@ -254,7 +272,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const Text(
                         "Address Information",
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Card(
@@ -276,7 +297,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 controller: addressCtrl,
                                 maxLines: 3,
                                 decoration: fieldDeco("Address"),
-                                validator: (v) => v!.isEmpty ? "Required" : null,
+                                validator: (v) =>
+                                    v!.isEmpty ? "Required" : null,
                               ),
 
                               const SizedBox(height: 20),
@@ -284,14 +306,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               const SizedBox(height: 8),
                               TextFormField(
                                 controller: aadhaarCtrl,
-                                decoration: fieldDeco("Aadhaar Number (Optional)"),
+                                decoration: fieldDeco(
+                                  "Aadhaar Number (Optional)",
+                                ),
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
                                 maxLength: 12,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) return null;
+                                  if (value == null || value.isEmpty)
+                                    return null;
                                   if (!AadharValidator.validateAadhar(value)) {
                                     return "Enter a valid Aadhaar number";
                                   }
@@ -447,7 +472,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     int age = calculateAge(selectedDOB!);
     if (age < 21) {
-      FloatingToast.showSimpleToast("You must be at least 21 years old to register");
+      FloatingToast.showSimpleToast(
+        "You must be at least 21 years old to register",
+      );
       return;
     }
 
@@ -484,15 +511,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
 
     if (!mounted) return;
-    if (success) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isProfileCompleted', true);
+    // if (success) {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isProfileCompleted', true);
+    // When login is successful
+    await prefs.setBool('isLoggedIn', true);
 
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
-    } else {
-      FloatingToast.showSimpleToast(
-        'Failed to update profile. Please try again.',
-      );
-    }
+    Navigator.pushReplacementNamed(context, AppRouter.home);
+    // } else {
+    //   FloatingToast.showSimpleToast(
+    //     'Failed to update profile. Please try again.',
+    //   );
+    // }
   }
 }

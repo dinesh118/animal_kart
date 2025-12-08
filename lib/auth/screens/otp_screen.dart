@@ -11,10 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OtpScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
 
-  const OtpScreen({
-    super.key,
-    required this.phoneNumber,
-  });
+  const OtpScreen({super.key, required this.phoneNumber});
 
   @override
   ConsumerState<OtpScreen> createState() => _OtpScreenState();
@@ -27,8 +24,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   String deviceModel = "";
   bool isOtpValid = false;
   bool _isVerifying = false;
-
- 
 
   @override
   void initState() {
@@ -47,10 +42,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(6),
@@ -66,7 +58,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             
               IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new),
                 onPressed: () => Navigator.pop(context),
@@ -74,7 +65,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
               const SizedBox(height: 10),
 
-             
               RichText(
                 text: TextSpan(
                   style: const TextStyle(
@@ -83,9 +73,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     color: Colors.black,
                   ),
                   children: [
-                    const TextSpan(
-                      text: "Please enter the OTP sent to ",
-                    ),
+                    const TextSpan(text: "Please enter the OTP sent to "),
                     TextSpan(
                       text: "(+91) ${widget.phoneNumber}",
                       style: const TextStyle(
@@ -99,7 +87,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
               const SizedBox(height: 30),
 
-              
               Center(
                 child: Pinput(
                   controller: otpController,
@@ -114,71 +101,67 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               ),
 
               const SizedBox(height: 10),
-            
+
               const Spacer(),
 
-             
               SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
                   onPressed: isOtpValid && !_isVerifying
-                  ? () async {
-                      setState(() => _isVerifying = true);
-                      final enteredOtp = otpController.text.trim();
-                      final success = await ref
-                          .read(authProvider)
-                          .verifyWhatsappOtp(
-                            phone: widget.phoneNumber,
-                            otp: enteredOtp,
-                          );
+                      ? () async {
+                          setState(() => _isVerifying = true);
+                          final enteredOtp = otpController.text.trim();
+                          final success = await ref
+                              .read(authProvider)
+                              .verifyWhatsappOtp(
+                                phone: widget.phoneNumber,
+                                otp: enteredOtp,
+                              );
 
-                      if (!mounted) return;
+                          if (!mounted) return;
 
-                      if (success) {
-                        FloatingToast.showSimpleToast(
-                          "OTP Verified Successfully",
-                        );
-                        final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool('isLoggedIn', true);
+                          if (success) {
+                            FloatingToast.showSimpleToast(
+                              "OTP Verified Successfully",
+                            );
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool('isLoggedIn', true);
 
-                        final userProfile = ref.read(authProvider).userProfile;
+                            final userProfile = ref
+                                .read(authProvider)
+                                .userProfile;
 
-                        if (!mounted) return;
+                            if (!mounted) return;
 
+                            if (userProfile == null) {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRouter.profileForm,
+                                arguments: {
+                                  'phoneNumberFromLogin': widget.phoneNumber,
+                                },
+                              );
+                            } else {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRouter.home,
+                              );
+                            }
+                          } else {
+                            FloatingToast.showSimpleToast("Invalid OTP");
+                          }
 
-                  if (userProfile == null) {
-                    Navigator.pushReplacementNamed(
-                      context,
-                      AppRoutes.profileForm,
-                      arguments: {
-                        'phoneNumberFromLogin': widget.phoneNumber,
-                      },
-                    );
-                  } 
-  
-                      else {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.home,
-                        );
-                      }
-                      } else {
-                        FloatingToast.showSimpleToast("Invalid OTP");
-                      }
-
-                      setState(() => _isVerifying = false);
-                    }
-                  : null,
+                          setState(() => _isVerifying = false);
+                        }
+                      : null,
 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isOtpValid
                         ? const Color(0xFF57BE82)
                         : Colors.grey.shade300,
-                    disabledBackgroundColor:
-                        const Color(0xFFBAECD1),
-                    disabledForegroundColor:
-                        Colors.grey.shade700,
+                    disabledBackgroundColor: const Color(0xFFBAECD1),
+                    disabledForegroundColor: Colors.grey.shade700,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(35),
                     ),
@@ -189,8 +172,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(
+                            valueColor: AlwaysStoppedAnimation<Color>(
                               Color(0xFF57BE82),
                             ),
                           ),
@@ -213,7 +195,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       ),
     );
   }
-
 
   Future<void> getDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();

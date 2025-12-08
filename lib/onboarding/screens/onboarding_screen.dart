@@ -173,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                   onPressed: () =>
-                      Navigator.pushReplacementNamed(context, AppRoutes.login),
+                      Navigator.pushReplacementNamed(context, AppRouter.login),
                   child: const Text(
                     "Get Started",
                     style: TextStyle(fontSize: 18, color: Colors.black),

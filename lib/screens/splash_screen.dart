@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/app_constants.dart';
 
-
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -23,23 +22,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _navigateNext() async {
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (!mounted) return;
 
-  final prefs = await SharedPreferences.getInstance();
-  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    
-    if (isLoggedIn) {
-  
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
-  } else {
-    
-    Navigator.pushReplacementNamed(context, AppRoutes.onBoardingScreen);
-  }
+    final prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    
-    
-    
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, AppRouter.home);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRouter.onBoardingScreen);
+    }
   }
 
   @override

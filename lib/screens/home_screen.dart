@@ -1,14 +1,12 @@
-import 'package:animal_kart_demo2/l10n/app_localizations.dart';
+import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
 import 'package:animal_kart_demo2/buffalo/screens/buffalo_list_screen.dart';
+import 'package:animal_kart_demo2/l10n/app_localizations.dart';
 import 'package:animal_kart_demo2/orders/screens/orders_screen.dart';
 import 'package:animal_kart_demo2/profile/screens/user_profile_screen.dart';
-import 'package:animal_kart_demo2/services/notification_service.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
-import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -25,24 +23,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-     _requestNotificationPermission();
-  NotificationService().initNotifications();
-    
+
     _pages = const [
       BuffaloListScreen(),
-      // CartScreen(showAppBar: false), 
+      // CartScreen(showAppBar: false),
       OrdersScreen(),
       UserProfileScreen(),
     ];
   }
-
-  Future<void> _requestNotificationPermission() async {
-  final status = await Permission.notification.status;
-
-  if (status.isDenied || status.isRestricted) {
-    await Permission.notification.request();
-  }
-}
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
@@ -68,10 +56,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               elevation: 0,
               toolbarHeight: 90,
               shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
               ),
               centerTitle: true,
-              title: _selectedIndex == 2 // Profile tab
+              title:
+                  _selectedIndex ==
+                      2 // Profile tab
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -96,14 +88,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     )
                   : Row(
                       children: [
-                        Image.asset('assets/images/onboard_logo.png', height: 50),
+                        Image.asset(
+                          'assets/images/onboard_logo.png',
+                          height: 50,
+                        ),
                         const SizedBox(width: 8),
                       ],
                     ),
               actions: _selectedIndex == 2
                   ? [] // Hide actions on profile tab
                   : [
-                // ThemeToggleButton(),
+                      // ThemeToggleButton(),
                       Padding(
                         padding: const EdgeInsets.only(right: 16),
                         child: Container(
@@ -219,6 +214,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-
-  
 }

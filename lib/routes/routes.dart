@@ -3,12 +3,12 @@ import 'package:animal_kart_demo2/auth/screens/otp_screen.dart';
 import 'package:animal_kart_demo2/auth/screens/register_form.dart';
 import 'package:animal_kart_demo2/buffalo/screens/bufflo_details_screen.dart';
 import 'package:animal_kart_demo2/notification/screens/notification_screen.dart';
-import 'package:animal_kart_demo2/screens/home_screen.dart';
 import 'package:animal_kart_demo2/onboarding/screens/onboarding_screen.dart';
+import 'package:animal_kart_demo2/screens/home_screen.dart';
 import 'package:animal_kart_demo2/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
-class AppRoutes {
+class AppRouter {
   static const String splash = '/';
   static const String onBoardingScreen = '/onboarding_screen';
   static const String login = '/login';
@@ -19,11 +19,10 @@ class AppRoutes {
   static const String buffaloDetails = '/buffalodetails';
   //static const String addBuffalocart = '/cart';
 
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>?;
     final verificationId = args?['verificationId'] as String?;
-  
+
     final phoneNumber = args?['phoneNumber'] as String? ?? '';
     switch (settings.name) {
       case splash:
@@ -34,23 +33,32 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case otp:
         return MaterialPageRoute(
-          builder: (_) => OtpScreen(
-            phoneNumber: phoneNumber, 
-          ),
+          builder: (_) => OtpScreen(phoneNumber: phoneNumber),
         );
-        
+
       case profileForm:
-      final args = settings.arguments as Map<String, dynamic>;
+        final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (_) => RegisterScreen(
             phoneNumberFromLogin: args['phoneNumberFromLogin'],
-            ),
+          ),
         );
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(
+          builder: (_) {
+            final isHomeRoute = settings.name == AppRouter.home;
+            if (isHomeRoute) {
+              return const HomeScreen();
+            } else {
+              return const LoginScreen(); // or your onboarding screen
+            }
+          },
+        );
       case buffaloDetails:
         final buffaloId = args?['buffaloId'] as String? ?? '';
-        return MaterialPageRoute(builder: (_)=>  BuffaloDetailsScreen(buffaloId: buffaloId) );
+        return MaterialPageRoute(
+          builder: (_) => BuffaloDetailsScreen(buffaloId: buffaloId),
+        );
       case notification:
         return MaterialPageRoute(builder: (_) => const NotificationScreen());
       default:

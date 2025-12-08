@@ -6,6 +6,7 @@ import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/locale_provider.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       if (success) {
         await SecureStorageService.enableBiometric(true);
         setState(() => _isBiometricEnabled = true);
-        
+
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -82,7 +83,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Disable App Lock'),
-          content: const Text('Are you sure you want to disable fingerprint lock?'),
+          content: const Text(
+            'Are you sure you want to disable fingerprint lock?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -95,7 +98,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           ],
         ),
       );
-      
+
       if (shouldDisable == true) {
         await SecureStorageService.enableBiometric(false);
         setState(() => _isBiometricEnabled = false);
@@ -108,7 +111,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Biometric Not Available'),
-        content: const Text('Your device does not support biometric authentication or no fingerprints are enrolled.'),
+        content: const Text(
+          'Your device does not support biometric authentication or no fingerprints are enrolled.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -139,7 +144,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
             ListTile(
               title: Text(
                 context.tr('selectLanguage'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               trailing: DropdownButton<Locale>(
                 value: currentLocale,
@@ -172,7 +180,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 context.tr('Personal Information'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -184,7 +195,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 context.tr('Aadhaar Card Number'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -208,13 +222,19 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       children: [
                         const Text(
                           "App Lock (Fingerprint)",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         _isLoading
                             ? const SizedBox(
                                 width: 30,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2))
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : Switch(
                                 value: _isBiometricEnabled,
                                 onChanged: _toggleBiometric,
@@ -225,7 +245,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                          const Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: Colors.blue,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -260,11 +284,14 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                     border: Border.all(color: Colors.blue.shade200),
                   ),
                   child: const Center(
-                    child: Text('Refer & Earn',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600)),
+                    child: Text(
+                      'Refer & Earn',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -286,11 +313,14 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                     border: Border.all(color: Colors.red.shade200),
                   ),
                   child: Center(
-                    child: Text(context.tr('logout'),
-                        style: TextStyle(
-                            color: Colors.red.shade700,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600)),
+                    child: Text(
+                      context.tr('logout'),
+                      style: TextStyle(
+                        color: Colors.red.shade700,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -313,28 +343,42 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         color: Theme.of(context).lightThemeCardColor,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 5, offset: const Offset(0, 3)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...items.entries.map((e) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (e.key.isNotEmpty)
-                      Text(context.tr(e.key),
-                          style: TextStyle(
-                              color: Colors.grey.shade600, fontSize: 14)),
-                    const SizedBox(height: 4),
-                    Text(e.value,
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              )),
+          ...items.entries.map(
+            (e) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (e.key.isNotEmpty)
+                    Text(
+                      context.tr(e.key),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  const SizedBox(height: 4),
+                  Text(
+                    e.value,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -352,7 +396,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('isLoggedIn', false);
+              Navigator.of(context).pop(true);
+            },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Logout'),
           ),
@@ -363,9 +411,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     if (shouldLogout == true) {
       // Clear biometric settings on logout
       await SecureStorageService.enableBiometric(false);
-      
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
     }
   }
 
@@ -382,23 +431,33 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Refer & Earn',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'Refer & Earn',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 10),
-              const Text("You will get 1000 coins for each refer",
-                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+              const Text(
+                "You will get 1000 coins for each refer",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 20,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.grey.shade200,
                 ),
-                child: const Text(referralCode,
-                    style: TextStyle(
-                        fontSize: 20,
-                        letterSpacing: 2,
-                        fontWeight: FontWeight.bold)),
+                child: const Text(
+                  referralCode,
+                  style: TextStyle(
+                    fontSize: 20,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 25),
               ElevatedButton(
@@ -414,6 +473,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   }
 
   void _shareReferral(String code) {
-    Share.share("Use my referral code $code and get 1000 coins on signup! 🐃🔥");
+    Share.share(
+      "Use my referral code $code and get 1000 coins on signup! 🐃🔥",
+    );
   }
 }

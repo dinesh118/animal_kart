@@ -18,9 +18,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool isButtonEnabled = false;
   bool _isSendingOtp = false;
 
-
-
- 
   bool isValidPhone(String value) {
     return RegExp(r'^[0-9]{10}$').hasMatch(value);
   }
@@ -51,7 +48,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const SizedBox(height: 40),
 
-               
                 const Center(
                   child: Text(
                     "Back to the Buffalo Cart\nworld!",
@@ -141,8 +137,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-               
-
                 const SizedBox(height: 40),
 
                 // ✅ STATIC LOGIN BUTTON
@@ -151,47 +145,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: isButtonEnabled && !_isSendingOtp
-                      ? () async {
-                          setState(() => _isSendingOtp = true);
+                        ? () async {
+                            setState(() => _isSendingOtp = true);
 
-                          final enteredPhone = phoneController.text.trim();
+                            final enteredPhone = phoneController.text.trim();
 
-                          // ✅ CALL REAL WHATSAPP OTP API
-                          final success = await ref
-                              .read(authProvider)
-                              .sendWhatsappOtp(enteredPhone);
+                            // ✅ CALL REAL WHATSAPP OTP API
+                            final success = await ref
+                                .read(authProvider)
+                                .sendWhatsappOtp(enteredPhone);
 
-                          if (!mounted) return;
+                            if (!mounted) return;
 
-                          if (success) {
-                            FloatingToast.showSimpleToast(
-                                "OTP sent via WhatsApp");
+                            if (success) {
+                              FloatingToast.showSimpleToast(
+                                "OTP sent via WhatsApp",
+                              );
 
-                            // ✅ NAVIGATE TO OTP SCREEN
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.otp,
-                              arguments: {
-                                'phoneNumber': enteredPhone,
-                              },
-                            );
-                          } else {
-                            FloatingToast.showSimpleToast(
-                                "Failed to send OTP");
+                              // ✅ NAVIGATE TO OTP SCREEN
+                              Navigator.pushNamed(
+                                context,
+                                AppRouter.otp,
+                                arguments: {'phoneNumber': enteredPhone},
+                              );
+                            } else {
+                              FloatingToast.showSimpleToast(
+                                "Failed to send OTP",
+                              );
+                            }
+
+                            setState(() => _isSendingOtp = false);
                           }
-
-                          setState(() => _isSendingOtp = false);
-                        }
-                      : null,
+                        : null,
 
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isButtonEnabled
                           ? const Color(0xFF57BE82)
                           : const Color.fromARGB(255, 186, 236, 209),
-                      disabledBackgroundColor:
-                          const Color(0xFFBAECD1),
-                      disabledForegroundColor:
-                          Colors.grey.shade700,
+                      disabledBackgroundColor: const Color(0xFFBAECD1),
+                      disabledForegroundColor: Colors.grey.shade700,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
@@ -202,8 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(
+                              valueColor: AlwaysStoppedAnimation<Color>(
                                 Color(0xFF57BE82),
                               ),
                             ),

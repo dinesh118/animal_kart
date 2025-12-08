@@ -1,44 +1,44 @@
-import 'package:local_auth/local_auth.dart';
+// lib/services/biometric_service.dart
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 
 class BiometricService {
+  // lib/services/biometric_session.dart
+
+  static bool isUnlocked = false;
+
+  static void unlock() => isUnlocked = true;
+  static void lock() => isUnlocked = false;
+
   static final _auth = LocalAuthentication();
-  static DateTime? _lastAuthAttempt;
-  static const Duration _authCooldown = Duration(milliseconds: 500);
 
   static Future<bool> hasBiometrics() async {
     try {
-      return await _auth.canCheckBiometrics;
+      final canCheck = await _auth.canCheckBiometrics;
+      final isDeviceSupported = await _auth.isDeviceSupported();
+      return canCheck && isDeviceSupported;
     } catch (e) {
       return false;
     }
   }
 
   static Future<bool> authenticate() async {
-    // Prevent multiple rapid authentication attempts
-    final now = DateTime.now();
-    if (_lastAuthAttempt != null) {
-      final diff = now.difference(_lastAuthAttempt!);
-      if (diff < _authCooldown) {
-        return false;
-      }
-    }
-    
-    _lastAuthAttempt = now;
-    
     try {
-      // Check if device supports biometrics
-      final isAvailable = await _auth.canCheckBiometrics;
-      if (!isAvailable) return false;
+      final can = await _auth.canCheckBiometrics;
+      if (!can) return false;
 
-      // Authenticate
-      final didAuthenticate = await _auth.authenticate(
-        localizedReason: 'Verify your fingerprint to continue',
+      final enrolled = await _auth.getAvailableBiometrics();
+      if (enrolled.isEmpty) return false;
+
+      return await _auth.authenticate(
+        localizedReason: 'Verify your identity to continue',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
       );
-      
-      return didAuthenticate;
     } on PlatformException catch (e) {
-      print('Biometric authentication error: $e');
+      print('Biometric auth error: $e');
       return false;
     }
   }

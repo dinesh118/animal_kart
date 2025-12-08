@@ -5,7 +5,6 @@ import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import '../models/buffalo.dart';
 
 class BuffaloCard extends ConsumerWidget {
@@ -16,8 +15,8 @@ class BuffaloCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final disabled = !buffalo.inStock;
-  // final cart = ref.watch(cartProvider);
-  // final isInCart = cart.containsKey(buffalo.id);
+    // final cart = ref.watch(cartProvider);
+    // final isInCart = cart.containsKey(buffalo.id);
 
     final String firstImage = buffalo.buffaloImages.first;
     final bool isNetwork = firstImage.startsWith("http");
@@ -27,12 +26,10 @@ class BuffaloCard extends ConsumerWidget {
           ? null
           : () {
               Navigator.pushNamed(
-              context,
-              AppRoutes.buffaloDetails,
-              arguments: {
-                'buffaloId': buffalo.id,
-              },
-            );
+                context,
+                AppRouter.buffaloDetails,
+                arguments: {'buffaloId': buffalo.id},
+              );
             },
       child: Opacity(
         opacity: disabled ? 0.4 : 1,
@@ -52,7 +49,6 @@ class BuffaloCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Stack(
                 children: [
                   ClipRRect(
@@ -74,7 +70,6 @@ class BuffaloCard extends ConsumerWidget {
                           ),
                   ),
 
-                  
                   Positioned(
                     top: 12,
                     right: 12,
@@ -113,7 +108,6 @@ class BuffaloCard extends ConsumerWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                       
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,9 +145,12 @@ class BuffaloCard extends ConsumerWidget {
 
                         const SizedBox(width: 12),
 
-                        
                         OutlinedButton.icon(
-                          onPressed: () => _showInsuranceInfo(context,buffalo.price,buffalo.insurance),
+                          onPressed: () => _showInsuranceInfo(
+                            context,
+                            buffalo.price,
+                            buffalo.insurance,
+                          ),
                           icon: const Icon(
                             Icons.info_outline,
                             size: 18,
@@ -218,37 +215,33 @@ class BuffaloCard extends ConsumerWidget {
                           ],
                         ),
 
-                       
-                    ElevatedButton(
-                      onPressed: (){
-                          Navigator.pushNamed(
-                        context,
-                        AppRoutes.buffaloDetails,
-                        arguments: {
-                          'buffaloId': buffalo.id,
-                        },
-                      );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimaryGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRouter.buffaloDetails,
+                              arguments: {'buffaloId': buffalo.id},
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 28,
+                              vertical: 14,
+                            ),
+                          ),
+                          child: Text(
+                            "View Details",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 14,
-                        ),
-                      ),
-                      child: Text(
-                         "View Details",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-
                       ],
                     ),
                   ],
@@ -262,7 +255,7 @@ class BuffaloCard extends ConsumerWidget {
   }
 
   // ===================== SHOW INSURANCE MODAL =====================
-  void _showInsuranceInfo(BuildContext context,int price,int insurance) {
+  void _showInsuranceInfo(BuildContext context, int price, int insurance) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -270,12 +263,12 @@ class BuffaloCard extends ConsumerWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
-      builder: (_) => _insuranceSheet(context,price,insurance),
+      builder: (_) => _insuranceSheet(context, price, insurance),
     );
   }
 
   // ===================== INSURANCE SHEET =====================
-  Widget _insuranceSheet(BuildContext context,int price,int insurance) {
+  Widget _insuranceSheet(BuildContext context, int price, int insurance) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -354,13 +347,10 @@ class BuffaloCard extends ConsumerWidget {
 
                 // Row 1
                 Container(
-                  padding:  EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 14,
-                  ),
-                  color:  Color(0xFF10B981),
+                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  color: Color(0xFF10B981),
                   child: Row(
-                    children:  [
+                    children: [
                       Expanded(
                         child: Text(
                           "1",
@@ -402,7 +392,10 @@ class BuffaloCard extends ConsumerWidget {
                         child: Text("2", style: TextStyle(fontSize: 14)),
                       ),
                       Expanded(
-                        child: Text(price.toString(), style: TextStyle(fontSize: 14)),
+                        child: Text(
+                          price.toString(),
+                          style: TextStyle(fontSize: 14),
+                        ),
                       ),
                       Expanded(
                         child: Text(

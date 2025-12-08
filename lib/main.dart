@@ -1,59 +1,46 @@
-
-import 'package:animal_kart_demo2/theme/theme_provider.dart'
-    show themeNotifierProvider;
+import 'package:animal_kart_demo2/auth/biometric_lock_screen.dart';
 import 'package:animal_kart_demo2/auth/firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:animal_kart_demo2/services/notification_service.dart';
+import 'package:animal_kart_demo2/theme/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_localizations/flutter_localizations.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'routes/routes.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'theme/theme_provider.dart';
-import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/locale_provider.dart';
+import 'routes/routes.dart';
+import 'theme/app_theme.dart' as AppTheme;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await NotificationService().initialize();
 
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
+  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
- 
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
 
-  
-  if (kDebugMode) {
-    
-    FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: false);
-  }
-
- 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode
-        ? AndroidProvider.debug
-        : AndroidProvider.playIntegrity,
-  );
-
   runApp(
     ProviderScope(
-      child: OKToast(child: MyApp(isDarkMode: isDarkMode)),
+      child: OKToast(
+        child: MyApp(isDarkMode: isDarkMode, isLoggedIn: isLoggedIn),
+      ),
     ),
   );
 }
 
 class MyApp extends ConsumerWidget {
   final bool isDarkMode;
+  final bool isLoggedIn;
 
-  const MyApp({super.key, required this.isDarkMode});
+  const MyApp({super.key, required this.isDarkMode, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,8 +50,8 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Animal Kart',
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: themeNotifier.themeMode,
       locale: locale.locale,
       localizationsDelegates: const [
@@ -78,9 +65,23 @@ class MyApp extends ConsumerWidget {
         Locale('hi', ''), // Hindi
         Locale('te', ''), // Telugu
       ],
-      initialRoute: AppRoutes.splash,
-      onGenerateRoute: AppRoutes.generateRoute,
-     
+      initialRoute: AppRouter.onBoardingScreen,
+      onGenerateRoute: AppRouter.generateRoute,
+      builder: (context, child) {
+        // Get the current route
+        final currentRoute = ModalRoute.of(context)?.settings.name;
+        debugPrint('Current route: $currentRoute');
+
+        // Check if we're on the home route and user is logged in
+        final isHomeRoute =
+            currentRoute == AppRouter.home ||
+            currentRoute == '/' ||
+            currentRoute == null;
+        if (isHomeRoute && isLoggedIn) {
+          return BiometricLockScreen(child: child ?? const SizedBox());
+        }
+        return child ?? const SizedBox();
+      },
     );
   }
 }
