@@ -98,7 +98,7 @@ class AuthController extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final targetUserId = userId ?? profile?.id;
+      final targetUserId = userId;
       if (targetUserId == null || targetUserId.isEmpty) {
         throw ArgumentError('userId or profile.id must be provided');
       }

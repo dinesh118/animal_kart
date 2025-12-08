@@ -141,10 +141,28 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         );
                         final prefs = await SharedPreferences.getInstance();
                           await prefs.setBool('isLoggedIn', true);
+
+                        final userProfile = ref.read(authProvider).userProfile;
+
+                        if (!mounted) return;
+
+
+                  if (userProfile == null) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      AppRoutes.profileForm,
+                      arguments: {
+                        'phoneNumberFromLogin': widget.phoneNumber,
+                      },
+                    );
+                  } 
+  
+                      else {
                         Navigator.pushReplacementNamed(
                           context,
                           AppRoutes.home,
                         );
+                      }
                       } else {
                         FloatingToast.showSimpleToast("Invalid OTP");
                       }

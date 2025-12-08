@@ -40,8 +40,11 @@ class AppRoutes {
         );
         
       case profileForm:
+      final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => RegisterScreen(phoneNumberFromLogin: phoneNumber),
+          builder: (_) => RegisterScreen(
+            phoneNumberFromLogin: args['phoneNumberFromLogin'],
+            ),
         );
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
