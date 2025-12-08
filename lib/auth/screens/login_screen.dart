@@ -141,17 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                // ---------------- INFO TEXT ----------------
-                Row(
-                  children: [
-                    Icon(
-                      Icons.info_rounded,
-                      size: 18,
-                      color: Colors.grey.shade600,
-                    ),
-                   
-                  ],
-                ),
+               
 
                 const SizedBox(height: 40),
 
