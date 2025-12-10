@@ -1,4 +1,5 @@
 import 'package:animal_kart_demo2/orders/screens/invoice_screen.dart';
+import 'package:animal_kart_demo2/orders/screens/pdf_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file/open_file.dart';
@@ -26,19 +27,39 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     final orders = ref.watch(ordersProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text(
-          "Order History",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+    backgroundColor: const Color(0xffF5F5F5),
+    // appBar: AppBar(
+    //   automaticallyImplyLeading: false,
+    //   backgroundColor: Colors.white,
+    //   elevation: 0,
+    //   title: Row(
+    //     children: [
+    //       GestureDetector(
+    //         onTap: () {
+    //           Navigator.pushNamedAndRemoveUntil(
+    //             context,
+    //             '/home',
+    //             (route) => false,
+    //           );
+    //         },
+    //         child: const Icon(Icons.arrow_back_ios,
+    //             color: Colors.black, size: 18),
+    //       ),
+    //       const SizedBox(width: 6),
+    //       const Text(
+    //         "Order History",
+    //         style: TextStyle(
+    //           color: Colors.black,
+    //           fontWeight: FontWeight.w600,
+    //           fontSize: 20,
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // ),
+   
+
+
       body: orders.isEmpty
           ? const Center(
               child: Text(
@@ -57,9 +78,21 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                   child: BuffaloOrderCard(
                     order: order,
                     onTapInvoice: () async {
-  final path = await InvoiceGenerator.generateInvoice(order);
-  await OpenFile.open(path);
+  final path = await InvoiceGenerator.generateInvoice();
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PdfViewerScreen(filePath: path),
+    ),
+  );
 },
+
+                    
+//                     onTapInvoice: () async {
+//   final path = await InvoiceGenerator.generateInvoice();
+//   await OpenFile.open(path);
+// },
 
                     // onTapInvoice: () async {
                     //   // Show loader
@@ -95,6 +128,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                 );
               },
             ),
+
     );
   }
 }

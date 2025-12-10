@@ -17,25 +17,25 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
+      int _selectedIndex = 0;
 
-  late final List<Widget> _pages;
+      late final List<Widget> _pages;
 
-  @override
-  void initState() {
-    super.initState();
+      @override
+      void initState() {
+        super.initState();
 
-    _pages = const [
-      BuffaloListScreen(),
-      // CartScreen(showAppBar: false),
-      OrdersScreen(),
-      UserProfileScreen(),
-    ];
-  }
+        _pages = const [
+          BuffaloListScreen(),
+          // CartScreen(showAppBar: false),
+          OrdersScreen(),
+          UserProfileScreen(),
+        ];
+      }
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-  }
+ void _onItemTapped(int index) {
+       setState(() => _selectedIndex = index);
+      }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: Theme.of(context).mainThemeBgColor,
 
       // ---------- CONDITIONAL COMMON APPBAR ----------
-      appBar: _selectedIndex == 1
-          ? null // Hide common AppBar on Orders tab
-          : AppBar(
+                appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: Theme.of(context).isLightTheme
                   ? kPrimaryDarkColor
@@ -61,70 +59,88 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   bottom: Radius.circular(30),
                 ),
               ),
-              centerTitle: true,
-              title:
-                  _selectedIndex ==
-                      2 // Profile tab
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          userProfile?.name ?? 'User Profile',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryTextColor,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        if (userProfile?.mobile != null)
-                          Text(
-                            '+91 ${userProfile!.mobile}',
-                            style: TextStyle(
-                              color: Theme.of(context).subTotalsTextColor,
-                              fontSize: 18,
-                            ),
-                          ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/onboard_logo.png',
-                          height: 50,
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-              actions: _selectedIndex == 2
-                  ? [] // Hide actions on profile tab
-                  : [
-                      // ThemeToggleButton(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white24,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.notifications_none_sharp,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                               Navigator.pushNamed(
-                              context,
-                              AppRouter.notification,
-                              
-                            );
-                            },
-                          ),
+
+              // Center title only for Orders & Profile
+              centerTitle: _selectedIndex != 0,
+
+              // ---------------- TITLE ----------------
+              title: () {
+                // PROFILE
+                if (_selectedIndex == 2) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        userProfile?.name ?? 'User Profile',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryTextColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      if (userProfile?.mobile != null)
+                        Text(
+                          '+91 ${userProfile!.mobile }',
+                          style: TextStyle(
+                            color: Theme.of(context).subTotalsTextColor,
+                            fontSize: 18,
+                          ),
+                        ),
                     ],
+                  );
+                }
+
+                // ORDERS TAB → "Order History"
+                if (_selectedIndex == 1) {
+                  return const Text(
+                    "Order History",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }
+
+                // HOME TAB → LOGO LEFT ALIGNED
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      'assets/images/onboard_logo.png',
+                      height: 50,
+                    ),
+                  ],
+                );
+              }(),
+
+              // ---------------- ACTIONS ----------------
+              actions: () {
+                if (_selectedIndex == 1) return const <Widget>[]; // Orders
+                if (_selectedIndex == 2) return const <Widget>[]; // Profile
+
+                // HOME → show notification
+                return <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white24,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.notifications_none_sharp,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ),
+                ];
+              }(),
             ),
 
       body: _pages[_selectedIndex],
@@ -191,34 +207,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _navItem({
-    required int index,
-    required IconData icon,
-    required String label,
-  }) {
-    final isSelected = _selectedIndex == index;
+ Widget _navItem({
+        required int index,
+        required IconData icon,
+        required String label,
+      }) {
+        final isSelected = _selectedIndex == index;
 
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 26,
-            color: isSelected ? kPrimaryGreen : Colors.grey.shade600,
+        return GestureDetector(
+          onTap: () => _onItemTapped(index),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 26,
+                color: isSelected ? kPrimaryGreen : Colors.grey.shade600,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                context.tr(label),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? kPrimaryGreen : Colors.grey.shade600,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            context.tr(label),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? kPrimaryGreen : Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+        );
+      }
+    }

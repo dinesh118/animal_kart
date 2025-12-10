@@ -5,6 +5,7 @@ import 'package:animal_kart_demo2/services/biometric_service.dart';
 import 'package:animal_kart_demo2/services/secure_storage_service.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -423,60 +424,219 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
     }
   }
-
   void _showReferBottomSheet(BuildContext context) {
-    const referralCode = "TRALAGO";
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+  const referralCode = "TRALAGO";
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: false,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            
+
+            const SizedBox(height: 6),
+
+            // Title
+            const Text(
+              'Refer & Earn',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            const Text(
+              "Earn 1000 coins when your friend registers using your referral code!",
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 14),
+
+            // Referral Code Card
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.green.withOpacity(0.18), // soft green shadow
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    referralCode,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.6,
+                    ),
+                  ),
+
+                 IconButton(
+  icon: const Icon(Icons.copy, size: 20),
+  onPressed: () {
+    final message =
+        "Use my referral code $referralCode and get 1000 coins on signup! 🐃🔥";
+
+    Clipboard.setData(
+      ClipboardData(text: message),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Referral message copied!"),
+        duration: Duration(milliseconds: 900),
       ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Refer & Earn',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    );
+  },
+),
+
+                ],
               ),
-              const SizedBox(height: 10),
-              const Text(
-                "You will get 1000 coins for each refer",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 20,
+            ),
+
+            const SizedBox(height: 14),
+
+            // How it works
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "How it works",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey.shade200,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+            _stepTile("1️⃣  Share your referral code"),
+            _stepTile("2️⃣  Friend installs & registers"),
+            _stepTile("3️⃣  You earn 1000 coins instantly!"),
+
+            const SizedBox(height: 18),
+
+            // SHARE BUTTON (Modern, Clean)
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () => _shareReferral(referralCode),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimaryDarkColor,
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
                 ),
                 child: const Text(
-                  referralCode,
+                  "Share Now",
                   style: TextStyle(
-                    fontSize: 20,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: () => _shareReferral(referralCode),
-                child: const Text('Share Now'),
-              ),
-              const SizedBox(height: 15),
-            ],
+            ),
+
+            const SizedBox(height: 10),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+    Widget _stepTile(String text) 
+    { return Padding( padding: const EdgeInsets.only(bottom: 8), 
+    child: Row( children: [ const SizedBox(width: 4), 
+    Expanded( child: 
+    Text( text, 
+    style: const TextStyle(
+      fontSize: 14, 
+      color: Colors.black87, 
+      ),
+        ),
+        ),
+          ],
           ),
-        );
-      },
-    );
-  }
+            );
+            }
+  // void _showReferBottomSheet(BuildContext context) {
+  //   const referralCode = "TRALAGO";
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+  //     ),
+  //     builder: (context) {
+  //       return Padding(
+  //         padding: const EdgeInsets.all(20),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             const Text(
+  //               'Refer & Earn',
+  //               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  //             ),
+  //             const SizedBox(height: 10),
+  //             const Text(
+  //               "You will get 1000 coins for each refer",
+  //               style: TextStyle(fontSize: 16, color: Colors.grey),
+  //             ),
+  //             const SizedBox(height: 20),
+  //             Container(
+  //               padding: const EdgeInsets.symmetric(
+  //                 vertical: 12,
+  //                 horizontal: 20,
+  //               ),
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 color: Colors.grey.shade200,
+  //               ),
+  //               child: const Text(
+  //                 referralCode,
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   letterSpacing: 2,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 25),
+  //             ElevatedButton(
+  //               onPressed: () => _shareReferral(referralCode),
+  //               child: const Text('Share Now'),
+  //             ),
+  //             const SizedBox(height: 15),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void _shareReferral(String code) {
     Share.share(
