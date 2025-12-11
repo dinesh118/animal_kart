@@ -28,37 +28,6 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
     return Scaffold(
     backgroundColor: const Color(0xffF5F5F5),
-    // appBar: AppBar(
-    //   automaticallyImplyLeading: false,
-    //   backgroundColor: Colors.white,
-    //   elevation: 0,
-    //   title: Row(
-    //     children: [
-    //       GestureDetector(
-    //         onTap: () {
-    //           Navigator.pushNamedAndRemoveUntil(
-    //             context,
-    //             '/home',
-    //             (route) => false,
-    //           );
-    //         },
-    //         child: const Icon(Icons.arrow_back_ios,
-    //             color: Colors.black, size: 18),
-    //       ),
-    //       const SizedBox(width: 6),
-    //       const Text(
-    //         "Order History",
-    //         style: TextStyle(
-    //           color: Colors.black,
-    //           fontWeight: FontWeight.w600,
-    //           fontSize: 20,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // ),
-   
-
 
       body: orders.isEmpty
           ? const Center(
@@ -89,42 +58,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 },
 
                     
-//                     onTapInvoice: () async {
-//   final path = await InvoiceGenerator.generateInvoice();
-//   await OpenFile.open(path);
-// },
-
-                    // onTapInvoice: () async {
-                    //   // Show loader
-                    //   showDialog(
-                    //     context: context,
-                    //     barrierDismissible: false,
-                    //     builder: (_) =>
-                    //         const Center(child: CircularProgressIndicator()),
-                    //   );
-
-                    //   try {
-                    //     // Generate invoice PDF
-                    //  //   final path = await InvoiceGenerator.generateInvoice();
-
-                    //     // Close loader
-                    //     Navigator.of(context).pop();
-
-                    //     // Navigate to InvoiceScreen
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (_) => InvoiceScreen(order: order,),
-                    //       ),
-                    //     );
-                    //   } catch (e) {
-                    //     Navigator.of(context).pop(); // Close loader
-                    //     ScaffoldMessenger.of(context).showSnackBar(
-                    //       SnackBar(content: Text("Error: $e")),
-                    //     );
-                    //   }
-                    // },
-                  ),
+             ),
                 );
               },
             ),

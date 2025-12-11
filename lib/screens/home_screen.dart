@@ -2,6 +2,7 @@ import 'package:animal_kart_demo2/auth/models/user_model.dart';
 import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
 import 'package:animal_kart_demo2/buffalo/screens/buffalo_list_screen.dart';
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
+import 'package:animal_kart_demo2/l10n/locale_provider.dart';
 import 'package:animal_kart_demo2/orders/screens/orders_screen.dart';
 import 'package:animal_kart_demo2/profile/screens/user_profile_screen.dart';
 import 'package:animal_kart_demo2/routes/routes.dart';
@@ -10,6 +11,7 @@ import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:animal_kart_demo2/utils/save_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:translator/translator.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +25,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       late final List<Widget> _pages;
       UserModel? localUser;
+      final translator = GoogleTranslator();
+String? localizedUserName;
 
       @override
       void initState() {
@@ -35,10 +39,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           UserProfileScreen(),
         ];
       }
-      Future<void> _loadLocalUser() async {
-      localUser = await loadUserFromPrefs();
-          setState(() {});
-      }
+      Future<String> _transliterateName(String name, String langCode) async {
+  if (name.isEmpty || langCode == 'en') return name;
+
+  try {
+    final transliteration = await translator.translate(name, from: 'en', to: langCode);
+    return transliteration.text;
+  } catch (e) {
+    return name;
+  }
+}
+Future<void> _loadLocalUser() async {
+  localUser = await loadUserFromPrefs();
+  final langCode = ref.read(localeProvider).locale.languageCode;
+
+  localizedUserName = await _transliterateName(localUser?.name ?? '', langCode);
+
+  setState(() {});
+}
+
+      // Future<void> _loadLocalUser() async {
+      // localUser = await loadUserFromPrefs();
+      //     setState(() {});
+      // }
 
       void _onItemTapped(int index) {
        setState(() => _selectedIndex = index);
@@ -98,17 +121,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
 
-               
-                if (_selectedIndex == 1) {
-                  return const Text(
-                    "Order History",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }
+               if (_selectedIndex == 1) {
+  return Text(
+    context.tr("orderHistory"), // localized term
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+}
+
+            
 
               
                 return Row(
@@ -207,7 +231,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               //       ),
               //   ],
               // ),
-              _navItem(index: 1, icon: Icons.shopping_cart, label: "Orders"),
+              _navItem(index: 1, icon: Icons.shopping_cart, label: "orders"),
 
               _navItem(index: 2, icon: Icons.person_outline, label: "Profile"),
             ],

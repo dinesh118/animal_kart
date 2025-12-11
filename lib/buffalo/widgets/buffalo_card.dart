@@ -234,13 +234,15 @@ class BuffaloCard extends ConsumerWidget {
                             ),
                           ),
                           child: Text(
-                            "View Details",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              context.tr("viewDetails"),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
+
+
                         ),
                       ],
                     ),

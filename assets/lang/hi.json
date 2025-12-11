@@ -73,5 +73,43 @@
   "12-day quarantine period begins": "12-दिवसीय क्वारंटीन अवधि प्रारंभ होती है",
   "Your wishlist is empty": "आपकी विशलिस्ट खाली है",
   "Address": "पता",
-  "Price:": "कीमत"
+  "Price:": "कीमत",
+    "gender": "लिंग",
+"refer_earn": "रेफर & कमाएँ",
+"Referred By Mobile": "रेफ़र करने वाले का मोबाइल",
+"Referred By Name": "रेफ़र करने वाले का नाम",
+"app_lock_fingerprint": "ऐप लॉक (फिंगरप्रिंट)",
+"refer_earn_title": "रेफ़र करें और कमाएँ",
+  "refer_description": "जब आपका मित्र आपका रेफ़रल कोड इस्तेमाल करके रजिस्टर करता है तो आपको मिलता है 1000 कॉइन!",
+  "copy_message": "रेफ़रल संदेश कॉपी हो गया!",
+  "how_it_works": "यह कैसे काम करता है",
+  "step1": "अपना रेफ़रल कोड साझा करें",
+  "step2": "मित्र ऐप इंस्टॉल कर रजिस्टर करता है",
+  "step3": "आपको तुरंत 1000 कॉइन मिलते हैं!",
+  "share": "शेयर",
+  "logout_message": "क्या आप वाकई लॉगआउट करना चाहते हैं?",
+  "cpfOffer": "CPF (Cattle Protection Fund) Offer",
+  "viewDetails": "विवरण देखें",
+  "orderPlaced": "ऑर्डर किया गया",
+  "pending": "पेंडिंग",
+  "confirmed": "कन्फर्म्ड",
+  "completed": "पूरा हुआ",
+  "age": "उम्र",
+  "years": "साल",
+  "unit": "यूनिट",
+  "paid": "भुगतान",
+  "invoice": "इनवॉइस",
+  "orders":"ऑर्डर",
+  "orderHistory": "ऑर्डर इतिहास"
+
+
+
+
+
+
+
+
+
+  
+
 }
