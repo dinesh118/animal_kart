@@ -1,17 +1,19 @@
 import 'package:animal_kart_demo2/auth/models/user_model.dart';
-
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/services/biometric_service.dart';
 import 'package:animal_kart_demo2/services/secure_storage_service.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/save_user.dart' as UserPrefsService;
+import 'package:animal_kart_demo2/widgets/user_profile/info_card.dart';
+import 'package:animal_kart_demo2/widgets/user_profile/refer_bottomsheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/locale_provider.dart';
+import 'package:translator/translator.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
@@ -22,30 +24,71 @@ class UserProfileScreen extends ConsumerStatefulWidget {
 
 class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   bool _isBiometricEnabled = false;
-  bool _isLoading = true;
+  bool _isLoading = true; // Loading flag for user + translation
   UserModel? _user;
+  Map<String, String> translatedData = {};
+  final translator = GoogleTranslator();
 
   @override
   void initState() {
     super.initState();
-    _loadBiometricStatus();
-    _loadUserProfile();
+    _loadProfileAndBiometric();
   }
 
-  Future<void> _loadUserProfile() async {
+  Future<void> _loadProfileAndBiometric() async {
+    // Load user data
     final user = await UserPrefsService.loadUserFromPrefs();
+    _user = user;
+
+    // Load biometric status
+    final enabled = await SecureStorageService.isBiometricEnabled();
+    _isBiometricEnabled = enabled;
+
+    // Translate user data
+    await _translateUserData();
+
     if (mounted) {
-      setState(() => _user = user);
+      setState(() {
+        _isLoading = false; // All done, show full screen
+      });
     }
   }
 
-  Future<void> _loadBiometricStatus() async {
-    final enabled = await SecureStorageService.isBiometricEnabled();
-    if (mounted) {
-      setState(() {
-        _isBiometricEnabled = enabled;
-        _isLoading = false;
-      });
+  Future<void> _translateUserData() async {
+    if (_user == null) return;
+
+    final langCode = ref.read(localeProvider).locale.languageCode;
+
+    final Map<String, String> data = {};
+
+    data['Email'] = await _translateValue(_user!.email, langCode);
+    data['Gender'] = await _translateValue(_user!.gender, langCode);
+    data['Aadhaar Card Number'] = _user!.aadharNumber.toString();
+    data['Referred By Mobile'] = _user!.referedByMobile;
+    data['Referred By Name'] =
+        await _transliterateName(_user!.referedByName, langCode);
+
+    translatedData = data;
+  }
+
+  Future<String> _transliterateName(String name, String langCode) async {
+    if (name.isEmpty || langCode == 'en') return name;
+    try {
+      final transliteration =
+          await translator.translate(name, from: 'en', to: langCode);
+      return transliteration.text;
+    } catch (_) {
+      return name;
+    }
+  }
+
+  Future<String> _translateValue(String value, String langCode) async {
+    if (value.isEmpty || langCode == 'en') return value;
+    try {
+      final translation = await translator.translate(value, to: langCode);
+      return translation.text;
+    } catch (_) {
+      return value;
     }
   }
 
@@ -127,19 +170,32 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildProfileContent(context);
-  }
+    ref.listen<LocaleProvider>(localeProvider, (_, __) async {
+      // On language change, re-translate and refresh
+      if (_user != null) {
+        setState(() => _isLoading = true);
+        await _translateUserData();
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    });
 
-  Widget _buildProfileContent(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).mainThemeBgColor,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final currentLocale = ref.watch(localeProvider).locale;
-
-    final profileData = {
-      'Email': _user?.email ?? '',
-      'Gender': _user?.gender ?? '',
-      'Aadhar Card Number': _user?.aadharNumber.toString() ?? '',
-      'Referred By Mobile': _user?.referedByMobile ?? '',
-      'Referred By Name': _user?.referedByName ?? '',
-    };
+    //  final profileData = {
+    //   'Email': _user?.email ?? '',
+    //   'Gender': _user?.gender ?? '',
+    //   'Aadhar Card Number': _user?.aadharNumber.toString() ?? '',
+    //   'Referred By Mobile': _user?.referedByMobile ?? '',
+    //   'Referred By Name': _user?.referedByName ?? '',
+    // };
 
     return Scaffold(
       backgroundColor: Theme.of(context).mainThemeBgColor,
@@ -196,8 +252,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            _infoCard(context, items: profileData),
+            InfoCardWidget(items: translatedData),
             const SizedBox(height: 20),
+          // App lock
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -211,9 +268,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "App Lock (Fingerprint)",
-                          style: TextStyle(
+                        Text(
+                          context.tr('app_lock_fingerprint'),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -227,9 +284,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                 ),
                               )
                             : Switch(
-                                value: _isBiometricEnabled,
-                                onChanged: _toggleBiometric,
-                              ),
+                          value: _isBiometricEnabled,
+                          onChanged: _toggleBiometric,
+                        ),
                       ],
                     ),
                     if (_isBiometricEnabled) ...[
@@ -261,6 +318,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
             const SizedBox(height: 20),
 
+            // Refer & Earn Button
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
@@ -273,10 +332,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.blue.shade200),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Refer & Earn',
-                      style: TextStyle(
+                      context.tr('refer_earn'),
+                      style: const TextStyle(
                         color: Colors.blue,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -289,6 +348,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
             const SizedBox(height: 20),
 
+            // Logout Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
@@ -322,67 +382,21 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
-  Widget _infoCard(BuildContext context, {required Map<String, String> items}) {
-    if (items.isEmpty) return const SizedBox.shrink();
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(18),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).lightThemeCardColor,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...items.entries.map(
-            (e) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (e.key.isNotEmpty)
-                    Text(
-                      context.tr(e.key),
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  const SizedBox(height: 4),
-                  Text(
-                    e.value,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Future<void> _showLogoutConfirmation(BuildContext context) async {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+         title: Text(context.tr('logout')),
+        //title: const Text('Logout'),
+        content: Text(context.tr('logout_message')),
+       // content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.tr('cancel')),
+
+            //child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
@@ -391,7 +405,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
               Navigator.of(context).pop(true);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Logout'),
+            child: Text(context.tr('logout')),
+            //child: const Text('Logout'),
           ),
         ],
       ),
@@ -405,216 +420,16 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
       ).pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
     }
   }
+void _showReferBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: false,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+    ),
+    builder: (_) => const ReferBottomSheet(referralCode: "TRALAGO"),
+  );
+}
 
-  void _showReferBottomSheet(BuildContext context) {
-    const referralCode = "TRALAGO";
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: false,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 6),
-
-              // Title
-              const Text(
-                'Refer & Earn',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-
-              const SizedBox(height: 4),
-
-              const Text(
-                "Earn 1000 coins when your friend registers using your referral code!",
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 14),
-
-              // Referral Code Card
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 18,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.green.withOpacity(
-                        0.18,
-                      ), // soft green shadow
-                      blurRadius: 12,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      referralCode,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.6,
-                      ),
-                    ),
-
-                    IconButton(
-                      icon: const Icon(Icons.copy, size: 20),
-                      onPressed: () {
-                        final message =
-                            "Use my referral code $referralCode and get 1000 coins on signup! 🐃🔥";
-
-                        Clipboard.setData(ClipboardData(text: message));
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Referral message copied!"),
-                            duration: Duration(milliseconds: 900),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 14),
-
-              // How it works
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "How it works",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-              _stepTile("1️⃣  Share your referral code"),
-              _stepTile("2️⃣  Friend installs & registers"),
-              _stepTile("3️⃣  You earn 1000 coins instantly!"),
-
-              const SizedBox(height: 18),
-
-              // SHARE BUTTON (Modern, Clean)
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () => _shareReferral(referralCode),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryDarkColor,
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                  child: const Text(
-                    "Share Now",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _stepTile(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  // void _showReferBottomSheet(BuildContext context) {
-  //   const referralCode = "TRALAGO";
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-  //     ),
-  //     builder: (context) {
-  //       return Padding(
-  //         padding: const EdgeInsets.all(20),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             const Text(
-  //               'Refer & Earn',
-  //               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-  //             ),
-  //             const SizedBox(height: 10),
-  //             const Text(
-  //               "You will get 1000 coins for each refer",
-  //               style: TextStyle(fontSize: 16, color: Colors.grey),
-  //             ),
-  //             const SizedBox(height: 20),
-  //             Container(
-  //               padding: const EdgeInsets.symmetric(
-  //                 vertical: 12,
-  //                 horizontal: 20,
-  //               ),
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(12),
-  //                 color: Colors.grey.shade200,
-  //               ),
-  //               child: const Text(
-  //                 referralCode,
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   letterSpacing: 2,
-  //                   fontWeight: FontWeight.bold,
-  //                 ),
-  //               ),
-  //             ),
-  //             const SizedBox(height: 25),
-  //             ElevatedButton(
-  //               onPressed: () => _shareReferral(referralCode),
-  //               child: const Text('Share Now'),
-  //             ),
-  //             const SizedBox(height: 15),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  void _shareReferral(String code) {
-    Share.share(
-      "Use my referral code $code and get 1000 coins on signup! 🐃🔥",
-    );
-  }
 }

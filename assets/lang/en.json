@@ -73,5 +73,34 @@
   "12-day quarantine period begins": "12-day quarantine period begins",
   "Your wishlist is empty": "Your wishlist is empty",
   "Address": "Address",
-  "Price:": "Price"
+  "Price:": "Price",
+  "refer_earn": "Refer & Earn",
+  "app_lock_fingerprint": "App Lock (Fingerprint)",
+  "refer_earn_title": "Refer & Earn",
+  "refer_description": "Earn 1000 coins when your friend registers using your referral code!",
+  "copy_message": "Referral message copied!",
+  "how_it_works": "How it works",
+  "step1": "Share your referral code",
+  "step2": "Friend installs & registers",
+  "step3": "You earn 1000 coins instantly!",
+  "share": "Share",
+  "logout_message": "Are you sure you want to logout?",
+  "cpfOffer": "CPF (Cattle Protection Fund) Offer",
+  "viewDetails": "View Details",
+ "orderPlaced": "Order Placed",
+  "pending": "Pending",
+  "confirmed": "Confirmed",
+  "completed": "Completed",
+  "age": "Age",
+  "years": "yrs",
+  "unit": "Unit",
+  "paid": "Paid",
+  "invoice": "Invoice",
+  "orders":"Orders",
+  "orderHistory": "Order History"
+
+
+  
+
+
 }
