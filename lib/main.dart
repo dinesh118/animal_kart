@@ -59,8 +59,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final position = await LocationService.getCurrentLocation();
 
     if (position != null) {
-      debugPrint("Latitude: ${position.latitude}");
-      debugPrint("Longitude: ${position.longitude}");
+     
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('latitude', position.latitude);

@@ -1,9 +1,7 @@
-import 'package:animal_kart_demo2/orders/screens/invoice_screen.dart';
-import 'package:animal_kart_demo2/orders/screens/pdf_viewer_screen.dart';
+import 'package:animal_kart_demo2/orders/providers/orders_providers.dart';
+import 'package:animal_kart_demo2/orders/widgets/orders_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/orders_providers.dart';
-import '../widgets/orders_card_widget.dart';
 
 class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
@@ -16,9 +14,24 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(ordersProvider.notifier).loadOrders();
+    
+    // Load orders after the frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOrders();
     });
+  }
+
+  Future<void> _loadOrders() async {
+    try {
+      await ref.read(ordersProvider.notifier).loadOrders();
+    } catch (error) {
+      // Show error message to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load orders: $error'),
+        ),
+      );
+    }
   }
 
   @override
@@ -43,15 +56,12 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                   itemCount: orders.length,
                   itemBuilder: (context, index) {
                     final order = orders[index];
-
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: BuffaloOrderCard(
                         order: order,
-                        onTapInvoice: ()  {
-                          
-
-                         
+                        onTapInvoice: () {
+                          // Handle invoice tap
                         },
                       ),
                     );

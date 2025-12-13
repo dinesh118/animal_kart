@@ -550,14 +550,14 @@ Widget _checkoutButton(
               final cartNotifier = ref.read(cartProvider.notifier);
               await cartNotifier.clearCart();
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ManualPaymentScreen(
-                    totalAmount: totalAmount,  
-                  ),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (_) => ManualPaymentScreen(
+              //       totalAmount: totalAmount,  
+              //     ),
+              //   ),
+              // );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.amber,

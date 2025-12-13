@@ -153,8 +153,7 @@ static Future<List<OrderUnit>> fetchOrders(String userId) async {
       },
     );
 
-    debugPrint("ORDERS STATUS: ${response.statusCode}");
-    debugPrint("ORDERS BODY: ${response.body}");
+    
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
