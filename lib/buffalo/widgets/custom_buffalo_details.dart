@@ -195,3 +195,48 @@ Future<void> showCpfConfirmationDialog(
     },
   );
 }
+
+class ExactStrikeText extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  final double strikeThickness;
+  final Color strikeColor;
+
+  const ExactStrikeText({
+    super.key,
+    required this.text,
+    required this.style,
+    this.strikeThickness = 2.2,
+    this.strikeColor = Colors.grey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textPainter = TextPainter(
+          text: TextSpan(text: text, style: style),
+          textDirection: TextDirection.ltr,
+        )..layout();
+
+        final textHeight = textPainter.size.height;
+
+        return Stack(
+          alignment: Alignment.centerLeft,
+          children: [
+            Text(text, style: style),
+            Positioned(
+              top: textHeight * 0.55, // 🎯 precise strike position
+              left: 0,
+              right: 0,
+              child: Container(
+                height: strikeThickness, // 🎯 exact thickness
+                color: strikeColor,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

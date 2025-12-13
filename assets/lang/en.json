@@ -87,6 +87,7 @@
   "logout_message": "Are you sure you want to logout?",
   "cpfOffer": "CPF (Cattle Protection Fund) Offer",
   "viewDetails": "View Details",
+  "buy":"Buy",
  "orderPlaced": "Order Placed",
   "pending": "Pending",
   "confirmed": "Confirmed",

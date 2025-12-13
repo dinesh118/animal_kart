@@ -21,6 +21,8 @@ class BuffaloCard extends ConsumerWidget {
 
     final String firstImage = buffalo.buffaloImages.first;
     final bool isNetwork = firstImage.startsWith("http");
+    final int basePrice = buffalo.price * 2;
+    final int cpfPrice = buffalo.insurance ;
 
     return GestureDetector(
       onTap: disabled
@@ -207,9 +209,9 @@ class BuffaloCard extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              "₹${buffalo.price}",
+                              "₹$basePrice  CPF - ₹$cpfPrice ",
                               style: const TextStyle(
-                                fontSize: 22,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -217,7 +219,7 @@ class BuffaloCard extends ConsumerWidget {
                         ),
 
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: disabled ? null : () {
                             Navigator.pushNamed(
                               context,
                               AppRouter.buffaloDetails,
@@ -235,7 +237,7 @@ class BuffaloCard extends ConsumerWidget {
                             ),
                           ),
                           child: Text(
-                              context.tr("viewDetails"),
+                              context.tr("buy"),
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

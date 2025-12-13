@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/buffalo/widgets/custom_buffalo_details.dart';
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -91,12 +92,12 @@ class InsuranceSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                Text(
-  context.tr("grandTotal"),
-  style: const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
-  ),
-),
+                  context.tr("grandTotal"),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 Text(
                   grandTotal.toString(),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
@@ -149,7 +150,7 @@ class InsuranceSheet extends StatelessWidget {
         children: [
           // Header Row
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
             decoration: const BoxDecoration(
               color: Color(0xFFDFF7ED),
               borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
@@ -158,7 +159,8 @@ class InsuranceSheet extends StatelessWidget {
               children: [
                 Expanded(child: Text(context.tr("S.No"), style: headerStyle)),
                 Expanded(child: Text(context.tr("Price"), style: headerStyle)),
-                Expanded(child: Text(context.tr("Insurance"), style: headerStyle, textAlign: TextAlign.right)),
+                
+                Expanded(child: Text(context.tr("Insurance"), style: headerStyle, textAlign: TextAlign.center)),
                 Expanded(child: Text(context.tr("Total"), style: headerStyle, textAlign: TextAlign.right)),
               ],
             ),
@@ -166,7 +168,7 @@ class InsuranceSheet extends StatelessWidget {
 
           // Row 1
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 14),
             color: const Color(0xFF10B981),
             child: Row(
               children: [
@@ -180,7 +182,7 @@ class InsuranceSheet extends StatelessWidget {
 
           // Row 2
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 14),
             decoration: const BoxDecoration(
               color: Color(0xFFF4FFFA),
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(18)),
@@ -192,17 +194,21 @@ class InsuranceSheet extends StatelessWidget {
 
                 // Strike-through insurance value
                 Expanded(
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        insurance.toString(),
+                      ExactStrikeText(
+                        text: "₹${insurance.toString()}",
                         style: const TextStyle(
                           fontSize: 14,
-                          decoration: TextDecoration.lineThrough,
-                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
                         ),
+                        strikeThickness: 2.2, // 👈 adjust to match design
+                        strikeColor: Colors.grey,
                       ),
+
+                      SizedBox(width: 5,),
                       Text(
                         context.tr("Free"),
                         style: const TextStyle(
