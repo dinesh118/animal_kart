@@ -172,6 +172,37 @@ static Future<List<OrderUnit>> fetchOrders(String userId) async {
 }
 
 
+static Future<Map<String, dynamic>?> confirmManualPayment({
+  required Map<String, dynamic> body,
+}) async {
+  try {
+    final url = "${AppConstants.apiUrl}/purchases/units/confirm-payment";
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        HttpHeaders.contentTypeHeader: AppConstants.applicationJson,
+      },
+      body: jsonEncode(body),
+    );
+
+    debugPrint("CONFIRM PAYMENT STATUS: ${response.statusCode}");
+    debugPrint("CONFIRM PAYMENT RESPONSE: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data; 
+    } else {
+      final data = jsonDecode(response.body);
+      return {"status": "error", "message": data["message"] ?? "Payment submission failed"};
+    }
+  } catch (e, stack) {
+    debugPrint("CONFIRM MANUAL PAYMENT ERROR: $e");
+    debugPrint(stack.toString());
+    return {"status": "error", "message": "Network error. Please try again."};
+  }
+}
+
+
 
 
   

@@ -1,8 +1,10 @@
 // lib/manualpayment/manual_payment_screen.dart
 import 'dart:io';
 import 'package:animal_kart_demo2/manualpayment/model/manual_payment_form_model.dart';
+import 'package:animal_kart_demo2/manualpayment/provider/manual_payment_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
@@ -13,7 +15,9 @@ import 'package:animal_kart_demo2/widgets/floating_toast.dart';
 
 import '../widgets/payment_mode_selector.dart';
 
-class ManualPaymentScreen extends StatefulWidget {
+
+
+class ManualPaymentScreen  extends ConsumerStatefulWidget  {
   final int totalAmount;
   final String unitId;
   final String userId;
@@ -28,10 +32,10 @@ class ManualPaymentScreen extends StatefulWidget {
   });
 
   @override
-  State<ManualPaymentScreen> createState() => _ManualPaymentScreenState();
+  ConsumerState<ManualPaymentScreen> createState() => _ManualPaymentScreenState();
 }
 
-class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
+class _ManualPaymentScreenState extends ConsumerState<ManualPaymentScreen> {
   bool showBankForm = true;
   bool showChequeForm = false;
 
@@ -281,37 +285,58 @@ class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
     debugPrint(transactionData.toString());
   }
 
-  Future<void> _handleBankTransferSubmit() async {
+Future<void> _handleBankTransferSubmit() async {
     if (!_bankFormKey.currentState!.validate()) return;
 
-    final screenshotError = BankTransferValidators.validatePaymentScreenshot(
-      bankScreenshot,
-    );
+    final screenshotError =
+        BankTransferValidators.validatePaymentScreenshot(bankScreenshot);
     if (screenshotError != null) {
       setState(() => bankScreenshotError = screenshotError);
       return;
     }
 
     if (bankScreenshotProgress != null) {
-      FloatingToast.showSimpleToast("Please wait for image upload to complete");
-      return;
-    }
-
-    if (bankScreenshotUrl == null && bankScreenshot != null) {
       FloatingToast.showSimpleToast(
-        "Image upload failed, please try again",
-      );
+          "Please wait for image upload to complete");
       return;
     }
 
-    _logBankTransferDetails();
+    final transactionData = {
+      "transferMode": transferMode,
+      "amount":
+          double.tryParse(bankAmountCtrl.text) ??
+              widget.totalAmount.toDouble(),
+      "utrNumber": utrCtrl.text.trim(),
+      "payerBankName": bankNameCtrl.text.trim(),
+      "transactionDate": transactionDateCtrl.text,
+      "payerIFSC": ifscCodeCtrl.text.trim(),
+      "paymentScreenshotUrl": bankScreenshotUrl,
+    };
 
-    setState(() => _isUploading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() => _isUploading = false);
+    final payload = {
+      "unitId": widget.unitId,
+      "paymentType": "BANK_TRANSFER",
+      "userId": widget.userId,
+      "buffaloId": widget.buffaloId,
+      "transaction": transactionData,
+    };
 
-    FloatingToast.showSimpleToast("Bank Transfer submitted successfully");
-    Navigator.pushReplacementNamed(context, AppRouter.PaymentPending);
+   
+    final controller = ref.read(manualPaymentProvider.notifier);
+
+    final success = await controller.submitManualPayment(payload);
+
+    if (success) {
+      FloatingToast.showSimpleToast(
+        controller.successMessage ?? "Submitted successfully",
+      );
+      Navigator.pushReplacementNamed(
+          context, AppRouter.PaymentPending);
+    } else {
+      FloatingToast.showSimpleToast(
+        controller.errorMessage ?? "Submission failed",
+      );
+    }
   }
 
   Future<void> _handleChequePaymentSubmit() async {
@@ -350,14 +375,40 @@ class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
       return;
     }
 
-    _logChequePaymentDetails();
+    // Build cheque transaction data
+    final transactionData = {
+      "chequeNumber": chequeNoCtrl.text.trim(),
+      "chequeDate": chequeDateCtrl.text.trim(),
+      "amount": double.tryParse(chequeAmountCtrl.text) ?? widget.totalAmount.toDouble(),
+      "bankName": chequeBankNameCtrl.text.trim(),
+      "ifscCode": chequeIfscCodeCtrl.text.trim(),
+      "utrReference": chequeUtrRefCtrl.text.trim(),
+      "frontImageUrl": chequeFrontUrl,
+      "backImageUrl": chequeBackUrl,
+    };
 
-    setState(() => _isUploading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() => _isUploading = false);
+    final payload = {
+      "unitId": widget.unitId,
+      "paymentType": "CHEQUE",
+      "userId": widget.userId,
+      "buffaloId": widget.buffaloId,
+      "transaction": transactionData,
+    };
 
-    FloatingToast.showSimpleToast("Cheque details submitted successfully");
-    Navigator.pushReplacementNamed(context, AppRouter.PaymentPending);
+    // Use the same provider for cheque payment
+    final controller = ref.read(manualPaymentProvider.notifier);
+    final success = await controller.submitManualPayment(payload);
+
+    if (success) {
+      FloatingToast.showSimpleToast(
+        controller.successMessage ?? "Submitted successfully",
+      );
+      Navigator.pushReplacementNamed(context, AppRouter.PaymentPending);
+    } else {
+      FloatingToast.showSimpleToast(
+        controller.errorMessage ?? "Submission failed",
+      );
+    }
   }
 
   Widget _paymentSelectButton({
@@ -592,10 +643,9 @@ class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
               const SizedBox(height: 20),
 
               _buildSubmitButton(
-                onPressed: _handleBankTransferSubmit,
-                isLoading: _isUploading,
-                isDisabled: bankScreenshotProgress != null || _isDeleting,
+                isFormBank: true,
               ),
+
             ],
           ),
         ),
@@ -788,11 +838,8 @@ class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
 
               const SizedBox(height: 20),
 
-              _buildSubmitButton(
-                onPressed: _handleChequePaymentSubmit,
-                isLoading: _isUploading,
-                isDisabled: chequeFrontProgress != null || 
-                    chequeBackProgress != null || _isDeleting,
+             _buildSubmitButton(
+                isFormBank: false,
               ),
             ],
           ),
@@ -948,29 +995,60 @@ class _ManualPaymentScreenState extends State<ManualPaymentScreen> {
     );
   }
 
-  Widget _buildSubmitButton({
-    required VoidCallback onPressed,
-    required bool isLoading,
-    bool isDisabled = false,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: isDisabled ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isDisabled ? Colors.grey : kPrimaryGreen,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+Widget _buildSubmitButton({
+  required bool isFormBank, // true = bank, false = cheque
+  bool isDisabled = false,
+}) {
+  return Consumer(
+    builder: (context, ref, _) {
+      final controller = ref.watch(manualPaymentProvider);
+
+      final bool isUploadInProgress = isFormBank
+          ? bankScreenshotProgress != null
+          : (chequeFrontProgress != null || chequeBackProgress != null);
+
+      final bool shouldDisable =
+          isDisabled ||
+          controller.isLoading ||
+          isUploadInProgress ||
+          _isDeleting;
+
+      return SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: shouldDisable
+              ? null
+              : (isFormBank
+                  ? _handleBankTransferSubmit
+                  : _handleChequePaymentSubmit),
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                shouldDisable ? Colors.grey : kPrimaryGreen,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
           ),
+          child: controller.isLoading
+              ? const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text(
+                  "Submit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ),
-        child: isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-                "Submit",
-                style: TextStyle(color: Colors.white, fontSize: 17),
-              ),
-      ),
-    );
-  }
+      );
+    },
+  );
+}
 }

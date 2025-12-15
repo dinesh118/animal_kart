@@ -136,10 +136,10 @@ class ChequePaymentValidators {
         }
         
         // Check if cheque is older than 3 months (90 days)
-        // final difference = now.difference(chequeDate).inDays;
-        // if (difference > 90) {
-        //   return "Cheque date cannot be older than 3 months";
-        // }
+          // final difference = now.difference(chequeDate).inDays;
+          // if (difference > 90) {
+          //   return "Cheque date cannot be older than 3 months";
+          // }
       }
     } catch (e) {
       return "Invalid date format. Use DD-MM-YYYY";
