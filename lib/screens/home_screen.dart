@@ -110,7 +110,7 @@ String? localizedUserName;
                         Text(
                           '+91 ${localUser?.mobile ?? ''}',
                           style: TextStyle(
-                            color: Theme.of(context).primaryTextColor,
+                            color: Theme.of(context).secondaryTextColor,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
