@@ -1,5 +1,5 @@
 import 'package:animal_kart_demo2/auth/models/user_model.dart';
-import 'package:animal_kart_demo2/auth/providers/auth_provider.dart';
+
 import 'package:animal_kart_demo2/buffalo/screens/buffalo_list_screen.dart';
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
 import 'package:animal_kart_demo2/orders/screens/orders_screen.dart';
@@ -8,7 +8,7 @@ import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:animal_kart_demo2/utils/save_user.dart';
-import 'package:animal_kart_demo2/widgets/coin_widget.dart'; // CoinBadge
+import 'package:animal_kart_demo2/widgets/coin_widget.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:translator/translator.dart';
@@ -74,7 +74,7 @@ String? localizedUserName;
     );
   }
 
-  // ---------- AppBar Title ----------
+
   Widget _buildTitle(BuildContext context) {
     if (_selectedIndex == 2) {
       // Profile Screen
@@ -118,11 +118,11 @@ String? localizedUserName;
     }
   }
 
-  // ---------- AppBar Actions ----------
+
  // ---------- AppBar Actions ----------
 List<Widget> _buildActions(BuildContext context) {
-  if (_selectedIndex == 1) return const []; // Orders → no actions
-
+  if (_selectedIndex == 1) return const []; 
+  
   List<Widget> actions = [
     const Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
@@ -130,7 +130,6 @@ List<Widget> _buildActions(BuildContext context) {
     ),
   ];
 
-  // Only Home → add notifications
   if (_selectedIndex == 0) {
     actions.add(
       Padding(
