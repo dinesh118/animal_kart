@@ -6,21 +6,26 @@ import '../../manualpayment/screens/manual_payment_screen.dart';
 
 class BuffaloOrderCard extends StatelessWidget {
   final OrderUnit order;
+  final Future<void> Function() onTapInvoice;
 
   const BuffaloOrderCard({
     super.key,
     required this.order,
-    required Null Function() onTapInvoice,
+    required this.onTapInvoice,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool isPendingPayment = order.paymentStatus.toUpperCase() == "PENDING_PAYMENT";
+    final bool isPendingPayment =
+        order.paymentStatus.toUpperCase() == "PENDING_PAYMENT";
     final bool isPaid = order.paymentStatus.toUpperCase() == "PAID";
-    final bool isUnderReview = order.paymentStatus.toUpperCase() == "UNDER_REVIEW";
+    final bool isUnderReview =
+        order.paymentStatus.toUpperCase() == "UNDER_REVIEW";
 
     final Color statusColor = isPaid ? Colors.green : Colors.orange;
-    final String statusText = isPaid ? context.tr("paid") : context.tr("pending");
+    final String statusText = isPaid
+        ? context.tr("paid")
+        : context.tr("pending");
 
     const int totalAmount = 363000;
 
@@ -46,7 +51,11 @@ class BuffaloOrderCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 4))
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Column(
@@ -60,16 +69,27 @@ class BuffaloOrderCard extends StatelessWidget {
                 children: [
                   Text(
                     "Order Placed on: ${DateUtilsHelper.formatPlacedAt(order.placedAt.toString())}",
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                        color: statusColor, borderRadius: BorderRadius.circular(12)),
+                      color: statusColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Text(
                       statusText.toUpperCase(),
                       style: const TextStyle(
-                          color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -77,7 +97,11 @@ class BuffaloOrderCard extends StatelessWidget {
             ),
 
             /// ---------------- FULL WIDTH DIVIDER ----------------
-            Container(height: 1, width: double.infinity, color: Colors.grey.withOpacity(0.4)),
+            Container(
+              height: 1,
+              width: double.infinity,
+              color: Colors.grey.withOpacity(0.4),
+            ),
 
             /// ---------------- IMAGE + DETAILS + AMOUNT ----------------
             Padding(
@@ -101,23 +125,43 @@ class BuffaloOrderCard extends StatelessWidget {
                       children: [
                         Text(
                           "Buffalo ID: ${order.buffaloId}",
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            _valueRow(context, "${order.buffaloCount}", context.tr("buffalo")),
+                            _valueRow(
+                              context,
+                              "${order.buffaloCount}",
+                              context.tr("buffalo"),
+                            ),
                             const SizedBox(width: 6),
-                            _valueRow(context, "${order.calfCount}", context.tr("calf")),
+                            _valueRow(
+                              context,
+                              "${order.calfCount}",
+                              context.tr("calf"),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         RichText(
                           text: TextSpan(
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                             children: [
-                              TextSpan(text: "${order.numUnits} ", style: const TextStyle(color: Colors.black)),
-                              TextSpan(text: "${context.tr("unit")} + CPF", style: const TextStyle(color: Colors.black)),
+                              TextSpan(
+                                text: "${order.numUnits} ",
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                              TextSpan(
+                                text: "${context.tr("unit")} + CPF",
+                                style: const TextStyle(color: Colors.black),
+                              ),
                             ],
                           ),
                         ),
@@ -126,14 +170,21 @@ class BuffaloOrderCard extends StatelessWidget {
                   ),
                   Text(
                     "₹${_formatAmount(totalAmount)}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
             ),
 
             /// ---------------- DIVIDER BELOW IMAGE ----------------
-            Container(height: 1, width: double.infinity, color: Colors.grey.withOpacity(0.4)),
+            Container(
+              height: 1,
+              width: double.infinity,
+              color: Colors.grey.withOpacity(0.4),
+            ),
 
             /// ---------------- INFO + BUTTONS ----------------
             Padding(
@@ -146,7 +197,10 @@ class BuffaloOrderCard extends StatelessWidget {
                     children: [
                       if (isPendingPayment)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.blueAccent,
                             borderRadius: BorderRadius.circular(12),
@@ -162,7 +216,10 @@ class BuffaloOrderCard extends StatelessWidget {
                         ),
                       if (isUnderReview)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Color(0xFF7E57C2),
                             borderRadius: BorderRadius.circular(12),
@@ -179,20 +236,45 @@ class BuffaloOrderCard extends StatelessWidget {
                       if (isPaid && order.paymentType != null) ...[
                         Container(
                           margin: const EdgeInsets.only(left: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
-                            order.paymentType!.replaceAll("_", " ").toUpperCase(),
-                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
+                            order.paymentType!
+                                .replaceAll("_", " ")
+                                .toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20)),
-                          child: Text(
-                            context.tr("invoice"),
-                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+                        GestureDetector(
+                          onTap: onTapInvoice,
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              context.tr("invoice"),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -204,7 +286,11 @@ class BuffaloOrderCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.info_outline, color: Colors.grey, size: 16),
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.grey,
+                          size: 16,
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -237,9 +323,15 @@ class BuffaloOrderCard extends StatelessWidget {
         children: [
           TextSpan(
             text: "$value ",
-            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
           ),
-          TextSpan(text: label, style: const TextStyle(color: Colors.black)),
+          TextSpan(
+            text: label,
+            style: const TextStyle(color: Colors.black),
+          ),
         ],
       ),
     );
