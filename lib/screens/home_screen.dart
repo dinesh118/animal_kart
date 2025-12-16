@@ -121,38 +121,38 @@ String? localizedUserName;
 
  // ---------- AppBar Actions ----------
 List<Widget> _buildActions(BuildContext context) {
-  if (_selectedIndex == 1) return const []; 
-  
-  List<Widget> actions = [
-    const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      child: CoinBadge(),
-    ),
-  ];
-
-  if (_selectedIndex == 0) {
-    actions.add(
-      Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white24,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-            onPressed: () {
-              Navigator.pushNamed(context, AppRouter.notification);
-            },
+  switch (_selectedIndex) {
+    case 0: // BuffaloListScreen (Home)
+      return [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: CoinBadge(),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white24,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.notifications_none, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.notification);
+              },
+            ),
           ),
         ),
-      ),
-    );
+      ];
+    case 1: // OrdersScreen
+      return const [];
+    case 2: // UserProfileScreen
+      return const [];
+    default:
+      return const [];
   }
-
-  return actions;
 }
 
 
