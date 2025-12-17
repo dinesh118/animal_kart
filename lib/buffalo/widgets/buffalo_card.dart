@@ -126,25 +126,25 @@ class BuffaloCard extends ConsumerWidget {
                                   color: Theme.of(context).primaryTextColor,
                                 ),
                               ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.local_drink,
-                                    size: 18,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    "${buffalo.milkYield}${context.tr("L")}/${context.tr("day")}",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                             
+                              // Row(
+                              //   children: [
+                              //     const Icon(
+                              //       Icons.local_drink,
+                              //       size: 18,
+                              //       color: Colors.grey,
+                              //     ),
+                              //     const SizedBox(width: 6),
+                              //     Text(
+                              //       "${buffalo.milkYield}${context.tr("L")}/${context.tr("day")}",
+                              //       style: const TextStyle(
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.w500,
+                              //         color: Colors.grey,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
@@ -152,26 +152,26 @@ class BuffaloCard extends ConsumerWidget {
                         const SizedBox(width: 12),
 
                      OutlinedButton.icon(
-  onPressed: isCpfAvailable
-      ? () => _showInsuranceInfo(
-            context,
-            buffalo.price,
-            buffalo.insurance,
-          )
-      : null, // 🚫 disabled when not available
-  icon: Icon(
-    Icons.info_outline,
-    size: 18,
-    color: isCpfAvailable ? Colors.black : Colors.grey,
-  ),
-  label: Text(
-    context.tr("CPF"),
-    style: TextStyle(
-      color: isCpfAvailable ? Colors.black : Colors.grey,
-      fontSize: 13,
-      fontWeight: FontWeight.w500,
-    ),
-  ),
+      onPressed: isCpfAvailable
+          ? () => _showInsuranceInfo(
+                context,
+                buffalo.price,
+                buffalo.insurance,
+              )
+          : null, 
+      icon: Icon(
+        Icons.info_outline,
+        size: 18,
+        color: isCpfAvailable ? Colors.black : Colors.grey,
+      ),
+      label: Text(
+        context.tr("CPF"),
+        style: TextStyle(
+          color: isCpfAvailable ? Colors.black : Colors.grey,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
   style: OutlinedButton.styleFrom(
     backgroundColor: isCpfAvailable
         ? (Theme.of(context).isLightTheme

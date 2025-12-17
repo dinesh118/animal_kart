@@ -9,7 +9,7 @@ import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:animal_kart_demo2/utils/save_user.dart';
-import 'package:animal_kart_demo2/widgets/coin_widget.dart'; 
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -147,10 +147,10 @@ List<Widget> _buildActions(BuildContext context) {
   switch (_selectedIndex) {
     case 0: 
       return [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: CoinBadge(),
-        ),
+        // const Padding(
+        //   padding: EdgeInsets.symmetric(horizontal: 12),
+        //   child: CoinBadge(),
+        // ),
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: Container(
