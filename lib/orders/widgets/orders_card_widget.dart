@@ -26,6 +26,8 @@ class BuffaloOrderCard extends StatelessWidget {
     final bool showPaymentType =
       (isPaid || isAdminVerificationPending) &&
       order.paymentType != null;
+final bool isRejected =
+    order.paymentStatus.toUpperCase() == "PAYMENT_REJECTED";
 
     
 
@@ -37,7 +39,12 @@ class BuffaloOrderCard extends StatelessWidget {
 
   case "PENDING_ADMIN_VERIFICATION":
     statusColor = Colors.blue;
-    statusText = context.tr("verification pending");
+    statusText = context.tr("pending");
+    break;
+
+ case "PAYMENT_REJECTED":
+    statusColor = Colors.red;
+    statusText = context.tr("rejected");
     break;
 
   case "PENDING_PAYMENT":
@@ -53,21 +60,21 @@ class BuffaloOrderCard extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: isPendingPayment
-          ? () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ManualPaymentScreen(
-                    totalAmount: totalAmount,
-                    unitId: order.id,
-                    userId: order.userId,
-                    buffaloId: order.buffaloId,
-                  ),
-                ),
-              );
-            }
-          : null,
+onTap: (isPendingPayment && !isRejected)
+    ? () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ManualPaymentScreen(
+              totalAmount: totalAmount,
+              unitId: order.id,
+              userId: order.userId,
+              buffaloId: order.buffaloId,
+            ),
+          ),
+        );
+      }
+    : null,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

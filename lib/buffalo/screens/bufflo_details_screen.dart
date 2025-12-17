@@ -17,8 +17,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BuffaloDetailsScreen extends ConsumerStatefulWidget {
   final String buffaloId;
+final bool hasPendingOrder;
 
-  const BuffaloDetailsScreen({super.key, required this.buffaloId});
+  const BuffaloDetailsScreen({super.key, required this.buffaloId,required this.hasPendingOrder,});
 
   @override
   ConsumerState<BuffaloDetailsScreen> createState() =>
@@ -30,6 +31,7 @@ class _BuffaloDetailsScreenState extends ConsumerState<BuffaloDetailsScreen> {
   int insuranceUnits = 0;
   int currentIndex = 0;
   bool isCpfSelected = true;
+//final bool disablePayment = widget.hasPendingOrder;
 
   late PageController _pageController;
 
@@ -233,6 +235,7 @@ class _BuffaloDetailsScreenState extends ConsumerState<BuffaloDetailsScreen> {
   }
 
   Widget _paymentSection(BuildContext context, buffalo, int totalAmount) {
+    final bool disablePayment = widget.hasPendingOrder;
     return Container(
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -242,61 +245,67 @@ class _BuffaloDetailsScreenState extends ConsumerState<BuffaloDetailsScreen> {
             height: 55,
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                if (!isCpfSelected) {
-                  showCpfConfirmationDialog(context, () {
-                    // User clicked Yes - proceed with online payment
-                    _processOnlinePayment(totalAmount);
-                  });
-                } else {
-                  _processOnlinePayment(totalAmount);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryGreen,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              child: Text(
-                context.tr("onlinePayment"),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+  onPressed: disablePayment
+      ? null
+      : () {
+          if (!isCpfSelected) {
+            showCpfConfirmationDialog(context, () {
+              _processOnlinePayment(totalAmount);
+            });
+          } else {
+            _processOnlinePayment(totalAmount);
+          }
+        },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: disablePayment ? Colors.grey : kPrimaryGreen,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(40),
+    ),
+  ),
+   child: Text(
+  context.tr("onlinePayment"),
+  style: TextStyle(
+    color: disablePayment ? Colors.grey : Colors.black,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+  ),
+),
+
+),
+
           ),
           const SizedBox(height: 12),
           SizedBox(
             height: 55,
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                if (!isCpfSelected) {
-                  showCpfConfirmationDialog(context, () {
-                    _handleManualPayment(buffalo.id);
-                  });
-                } else {
-                  _handleManualPayment(buffalo.id);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              child: Text(
-                context.tr("manualPayment"),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+  onPressed: disablePayment
+      ? null
+      : () {
+          if (!isCpfSelected) {
+            showCpfConfirmationDialog(context, () {
+              _handleManualPayment(buffalo.id);
+            });
+          } else {
+            _handleManualPayment(buffalo.id);
+          }
+        },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: disablePayment ? Colors.grey : Colors.amber,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(40),
+    ),
+  ),
+  child: Text(
+    context.tr("manualPayment"),
+    style:  TextStyle(
+          color: disablePayment ? Colors.grey : Colors.black,
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+    ),
+  ),
+),
+
           ),
         ],
       ),

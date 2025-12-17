@@ -10,6 +10,15 @@ final ordersProvider =
 );
 
 final ordersLoadingProvider = StateProvider<bool>((ref) => false);
+final hasPendingOrder = Provider<bool>((ref) {
+  final orders = ref.watch(ordersProvider);
+
+  return orders.any((order) {
+    final status = order.paymentStatus.toUpperCase();
+    return status == "PENDING_PAYMENT" ||
+           status == "PENDING_ADMIN_VERIFICATION";
+  });
+});
 
 class OrdersController extends StateNotifier<List<OrderUnit>> {
   final Ref ref;

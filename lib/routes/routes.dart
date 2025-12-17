@@ -5,6 +5,7 @@ import 'package:animal_kart_demo2/buffalo/screens/bufflo_details_screen.dart';
 import 'package:animal_kart_demo2/manualpayment/screens/payment_pending_screen.dart';
 import 'package:animal_kart_demo2/notification/screens/notification_screen.dart';
 import 'package:animal_kart_demo2/onboarding/screens/onboarding_screen.dart';
+import 'package:animal_kart_demo2/orders/providers/orders_providers.dart';
 import 'package:animal_kart_demo2/orders/screens/orders_screen.dart';
 import 'package:animal_kart_demo2/screens/home_screen.dart';
 import 'package:animal_kart_demo2/screens/splash_screen.dart';
@@ -37,6 +38,7 @@ class AppRouter {
       final args = settings.arguments as Map<String, dynamic>;
       final String phoneNumber = args['phoneNumber'];
       final String otp = args['otp'];
+      
       final bool isFormFilled = args['isFormFilled'];
         return MaterialPageRoute(
           builder: (_) => OtpScreen(
@@ -84,7 +86,7 @@ class AppRouter {
         final data = args as Map<String, dynamic>?;
       final buffaloId = data?['buffaloId'] ?? '';
         return MaterialPageRoute(
-          builder: (_) => BuffaloDetailsScreen(buffaloId: buffaloId),
+          builder: (_) => BuffaloDetailsScreen(buffaloId: buffaloId,hasPendingOrder: data?['hasPendingOrder'] ?? false),
         );
       case notification:
         return MaterialPageRoute(builder: (_) => const NotificationScreen());
