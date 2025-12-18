@@ -75,6 +75,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        title: Text('Track order',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
         leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_new,
@@ -97,8 +98,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   Widget _buildHeader() {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
+           border: Border.all(
+          color: kPrimaryDarkColor,
+          width: 1, // adjust thickness if required
+        ),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
