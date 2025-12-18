@@ -77,7 +77,7 @@ class InvoiceGenerator {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       _infoColumn("Invoice No", order.id),
-                      _infoColumn("Order Date", formatOrderDate(order.placedAt))
+                      _infoColumn("Order Date", formatOrderDate(order.approvalDate))
 
                      // _infoColumn("Order Date", order.placedAt ?? ""),
                     ],
@@ -133,7 +133,7 @@ class InvoiceGenerator {
                           )
                           .map(
                          (b) => buildRow(
-                              "Buffalo ID: ${order.buffaloId}",
+                              "Buffalo ID: ${order.breedId}",
                               //"Buffalo ID: ${b.id}\nAge: ${b.ageYears} years",
                               "1",
                               "RS 175,000",
@@ -308,14 +308,11 @@ static pw.Widget _termsAndConditions() {
 }
 
 
-String formatOrderDate(String? rawDate) {
-  if (rawDate == null || rawDate.isEmpty) return "";
 
-  try {
-    DateTime dt = DateTime.parse(rawDate);
-    return DateFormat('dd MMM yyyy, hh:mm a').format(dt); // e.g., 16 Dec 2025, 05:30 PM
-  } catch (e) {
-    return rawDate; // fallback if parsing fails
-  }
+
+String formatOrderDate(DateTime? date) {
+  if (date == null) return "";
+
+  return DateFormat('dd MMM yyyy, hh:mm a').format(date);
 }
 

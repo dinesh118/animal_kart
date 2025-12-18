@@ -6,6 +6,8 @@ class Buffalo {
   final int price;
   final bool inStock;
   final int insurance;
+  final String oneUnit;
+  
   final List<String> buffaloImages;
   final String description;
 
@@ -17,6 +19,7 @@ class Buffalo {
     required this.price,
     required this.inStock,
     required this.insurance,
+    required this.oneUnit,
     required this.buffaloImages,
     required this.description,
   });
@@ -31,6 +34,7 @@ class Buffalo {
       price: json['price'],
       inStock: json['inStock'],
       insurance: json['insurance'],
+      oneUnit: json['ONE_UNIT'],
       buffaloImages: List<String>.from(json['buffalo_images']),
       description: json['description'],
     );
@@ -46,6 +50,7 @@ class Buffalo {
       "price": price,
       "inStock": inStock,
       "insurance": insurance,
+      "ONE_UNIT": oneUnit,
       "buffalo_images": buffaloImages,
       "description": description,
     };

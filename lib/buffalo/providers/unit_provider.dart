@@ -1,4 +1,4 @@
-import 'package:animal_kart_demo2/buffalo/models/unit_selectin.dart';
+import 'package:animal_kart_demo2/buffalo/models/unit_selection.dart';
 import 'package:animal_kart_demo2/network/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';

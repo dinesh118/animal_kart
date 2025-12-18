@@ -62,7 +62,7 @@ class BuffaloOrderCard extends StatelessWidget {
                     totalAmount: totalAmount,
                     unitId: order.id,
                     userId: order.userId,
-                    buffaloId: order.buffaloId,
+                    buffaloId: order.breedId,
                   ),
                 ),
               );
@@ -146,7 +146,7 @@ class BuffaloOrderCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Buffalo ID: ${order.buffaloId}",
+                          "Buffalo ID: ${order.breedId}",
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -246,7 +246,7 @@ class BuffaloOrderCard extends StatelessWidget {
             totalAmount: totalAmount,
             unitId: order.id,
             userId: order.userId,
-            buffaloId: order.buffaloId,
+            buffaloId: order.breedId,
           ),
         ),
       );

@@ -5,7 +5,7 @@ import 'package:animal_kart_demo2/auth/models/device_details.dart';
 import 'package:animal_kart_demo2/auth/models/user_model.dart';
 import 'package:animal_kart_demo2/auth/models/whatsapp_otp_response.dart';
 import 'package:animal_kart_demo2/buffalo/models/buffalo.dart';
-import 'package:animal_kart_demo2/buffalo/models/unit_selectin.dart';
+import 'package:animal_kart_demo2/buffalo/models/unit_selection.dart';
 import 'package:animal_kart_demo2/orders/models/order_model.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -116,6 +116,9 @@ static Future<UnitSelection?> createUnitSelection({
   try {
     final url = "${AppConstants.apiUrl}/purchases/units/buy";
 
+    debugPrint("API URL: $url");
+    debugPrint("Request Body: ${jsonEncode(body)}");
+
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -129,15 +132,21 @@ static Future<UnitSelection?> createUnitSelection({
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      debugPrint("Parsed Response: $data");
 
-      if (data["status"] == "success" && data["unit"] != null) {
-        return UnitSelection.fromJson(data["unit"]);
+      if (data["status"] == "success" && data["order"] != null) {
+        return UnitSelection.fromJson(data["order"]);
+      } else if (data["message"] != null) {
+        debugPrint("API Error Message: ${data["message"]}");
       }
+    } else {
+      debugPrint("API returned non-200 status: ${response.statusCode}");
+      debugPrint("Response: ${response.body}");
     }
     return null;
   } catch (e, stack) {
     debugPrint("CREATE UNIT API ERROR: $e");
-    debugPrint(stack.toString());
+    debugPrint("STACK TRACE: $stack");
     return null;
   }
 }
@@ -153,20 +162,26 @@ static Future<List<OrderUnit>> fetchOrders(String userId) async {
       },
     );
 
-    
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      if (data["status"] == "success" && data["units"] != null) {
-        return (data["units"] as List)
-            .map((e) => OrderUnit.fromJson(e))
-            .toList();
-      }
+    if (response.statusCode != 200) {
+      debugPrint("FETCH ORDERS FAILED: ${response.statusCode}");
+      return [];
     }
-    return [];
-  } catch (e) {
+
+    final Map<String, dynamic> data = jsonDecode(response.body);
+
+    if (data['status'] != 'success' || data['orders'] == null) {
+      debugPrint("FETCH ORDERS INVALID RESPONSE");
+      return [];
+    }
+
+    final List ordersJson = data['orders'];
+
+    return ordersJson
+        .map((e) => OrderUnit.fromJson(e as Map<String, dynamic>))
+        .toList();
+  } catch (e, stack) {
     debugPrint("FETCH ORDERS ERROR: $e");
+    debugPrint(stack.toString());
     return [];
   }
 }

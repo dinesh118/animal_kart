@@ -1,79 +1,89 @@
 class OrderUnit {
   final String id;
   final String userId;
-  final String buffaloId;
+  final DateTime? userCreatedAt;
+  final DateTime? paymentSessionDate;
+  final String breedId;
+
   final int numUnits;
   final int buffaloCount;
   final int calfCount;
+
   final String? status;
   final String paymentStatus;
   final String? paymentType;
-  final String? placedAt;
-  final List<OrderedBuffalo> buffalos;
 
-  
+  final DateTime placedAt;
+  final DateTime? approvalDate;
+
+  final int baseUnitCost;
+  final int cpfUnitCost;
+  final int unitCost;
+  final int totalCost;
+
+  final bool withCpf;
+  final List<dynamic> buffalos;
 
   OrderUnit({
     required this.id,
     required this.userId,
-    required this.buffaloId,
+    required this.userCreatedAt,
+    required this.paymentSessionDate,
+    required this.breedId,
     required this.numUnits,
     required this.buffaloCount,
     required this.calfCount,
-    this.status,
+    required this.status,
     required this.paymentStatus,
-    this.paymentType,
-    this.placedAt,
+    required this.paymentType,
+    required this.placedAt,
+    required this.approvalDate,
+    required this.baseUnitCost,
+    required this.cpfUnitCost,
+    required this.unitCost,
+    required this.totalCost,
+    required this.withCpf,
     required this.buffalos,
-    
   });
 
   factory OrderUnit.fromJson(Map<String, dynamic> json) {
-    return OrderUnit(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      buffaloId: json['buffaloId'] ?? '',
-      numUnits: json['numUnits'] ?? 0,
-      buffaloCount: json['buffaloCount'] ?? 0,
-      calfCount: json['calfCount'] ?? 0,
-      status: json['status'],
-      paymentStatus: json['paymentStatus'] ?? '',
-      paymentType: json['paymentType'],
-      placedAt: json['placedAt'] ?? '',
-      buffalos: (json['buffalos'] as List? ?? [])
-          .map((e) => OrderedBuffalo.fromJson(e))
-          .toList(),
-      
-      // 🔹 Use backend text if provided, fallback to paymentStatus
-    );
+  DateTime? parseDate(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return DateTime.parse(value);
   }
+
+  return OrderUnit(
+    id: json['id'] ?? '',
+    userId: json['userId'] ?? '',
+    userCreatedAt: parseDate(json['userCreatedAt']),
+    paymentSessionDate: parseDate(json['paymentSessionDate']),
+    breedId: json['breedId'] ?? '',
+
+    numUnits: parseInt(json['numUnits']),
+    buffaloCount: parseInt(json['buffaloCount']),
+    calfCount: parseInt(json['calfCount']),
+
+    status: json['status'],
+    paymentStatus: json['paymentStatus'] ?? 'UNKNOWN',
+    paymentType: json['paymentType'],
+
+    placedAt: DateTime.parse(json['placedAt']),
+    approvalDate: parseDate(json['approvalDate']),
+
+    baseUnitCost: parseInt(json['baseUnitCost']),
+    cpfUnitCost: parseInt(json['cpfUnitCost']),
+    unitCost: parseInt(json['unitCost']),
+    totalCost: parseInt(json['totalCost']),
+
+    withCpf: json['withCpf'] ?? false,
+    buffalos: json['buffalos'] ?? [],
+  );
 }
 
-class OrderedBuffalo {
-  final String id;
-  final String? parentId;
-  final String breedId;
-  final int ageYears;
-  final String status;
-  final String type;
-
-  OrderedBuffalo({
-    required this.id,
-    this.parentId,
-    required this.breedId,
-    required this.ageYears,
-    required this.status,
-    required this.type,
-  });
-
-  factory OrderedBuffalo.fromJson(Map<String, dynamic> json) {
-    return OrderedBuffalo(
-      id: json['id'] ?? '',
-      parentId: json['parentId'],
-      breedId: json['breedId'] ?? '',
-      ageYears: json['ageYears'] ?? 0,
-      status: json['status'] ?? '',
-      type: json['type'] ?? '',
-    );
-  }
+}
+int parseInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  return int.tryParse(value.toString()) ?? 0;
 }
