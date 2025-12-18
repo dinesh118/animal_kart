@@ -167,8 +167,8 @@ Padding(
 
       // ---------------- TOTAL COLUMN ----------------
           Column(
-                    mainAxisAlignment: MainAxisAlignment.start, // top alignment
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 important: align left
+                    mainAxisAlignment: MainAxisAlignment.start, 
+                    crossAxisAlignment: CrossAxisAlignment.start, 
                     children: [
                       Text(
                         "Total",
@@ -252,7 +252,16 @@ Padding(
                             Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => TrackerScreen(),
+                              builder: (_) => TrackerScreen(
+                                buffaloType: order.breedId, 
+                                unitCount: order.buffaloCount, 
+                                purchaseDate: order.approvalDate.toString(), 
+                                buffaloCount: order.buffaloCount, 
+                                calfCount: order.calfCount, 
+                                totalUnitcost: order.totalCost,
+                                
+
+                                ),
                             ),
                           );
                           },
