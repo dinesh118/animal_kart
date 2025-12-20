@@ -59,6 +59,8 @@ class _ManualPaymentScreenState extends ConsumerState<ManualPaymentScreen> {
   final transactionDateCtrl = TextEditingController();
   String transferMode = 'NEFT';
   final List<String> transferModes = ['NEFT', 'RTGS', 'IMPS'];
+  String? ifscErrorBankTransfer;
+  String? ifscErrorCheque;
 
   File? bankScreenshot;
   String? bankScreenshotError;
@@ -113,6 +115,15 @@ class _ManualPaymentScreenState extends ConsumerState<ManualPaymentScreen> {
     // Cancel previous timer
     _ifscDebounceTimer?.cancel();
     
+     if (isBankTransfer) {
+    setState(() {
+      ifscErrorBankTransfer = null;
+    });
+  } else {
+    setState(() {
+      ifscErrorCheque = null;
+    });
+  }
     // If IFSC is empty, clear bank name
     if (value.isEmpty) {
       if (isBankTransfer) {
@@ -129,10 +140,14 @@ class _ManualPaymentScreenState extends ConsumerState<ManualPaymentScreen> {
         _fetchBankDetails(value, isBankTransfer: isBankTransfer);
       } else if (value.length > 11) {
         // If more than 11 chars, show error
+        final errorMessage = 'IFSC code must be exactly 11 characters';
         if (isBankTransfer) {
           bankNameCtrl.text = '';
+          ifscErrorBankTransfer = errorMessage;
         } else {
           chequeBankNameCtrl.text = '';
+          ifscErrorCheque = errorMessage;
+
         }
       }
     });
@@ -149,22 +164,27 @@ class _ManualPaymentScreenState extends ConsumerState<ManualPaymentScreen> {
         if (isBankTransfer) {
           setState(() {
             bankNameCtrl.text = bankInfo;
+            ifscErrorBankTransfer = null;
           });
         } else {
           setState(() {
             chequeBankNameCtrl.text = bankInfo;
+            ifscErrorCheque = null;
           });
         }
       } else {
         // Clear if invalid IFSC
         if (mounted) {
+           final errorMessage = 'IFSC code not found. Please enter a valid IFSC code.';
           if (isBankTransfer) {
             setState(() {
               bankNameCtrl.text = '';
+              ifscErrorBankTransfer = errorMessage;
             });
           } else {
             setState(() {
               chequeBankNameCtrl.text = '';
+              ifscErrorCheque = errorMessage;
             });
           }
         }
@@ -610,6 +630,18 @@ Future<void> _handleBankTransferSubmit() async {
                 ],
                 onChanged: (value) => _onIfscChanged(value, isBankTransfer: true),
               ),
+               if (ifscErrorBankTransfer != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 8),
+                child: Text(
+                  ifscErrorBankTransfer!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 8),
                ValidatedTextField(
@@ -819,6 +851,18 @@ Future<void> _handleBankTransferSubmit() async {
                  
               ],
               onChanged: (value) => _onIfscChanged(value, isBankTransfer: false),
+              ),
+              if (ifscErrorCheque != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 8),
+                child: Text(
+                  ifscErrorCheque!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
                const SizedBox(height: 8),
 
