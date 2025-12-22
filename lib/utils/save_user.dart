@@ -55,6 +55,7 @@ Future<UserModel?> loadUserFromPrefs() async {
     state: '',
     pincode: '',
     aadharNumber: int.parse(prefs.getString('aadharNumber') ?? '0'),
+     coins: prefs.getDouble('coins'),
     referedByMobile: prefs.getString('refered_by_mobile') ?? '',
     referedByName: prefs.getString('refered_by_name') ?? '',
     otp: '',

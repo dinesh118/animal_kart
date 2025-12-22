@@ -18,6 +18,7 @@ class UserModel {
   final String pincode;
 
   final int aadharNumber;
+  final double? coins;
 
   final String referedByMobile;
   final String referedByName;
@@ -41,6 +42,7 @@ class UserModel {
     required this.state,
     required this.pincode,
     required this.aadharNumber,
+    required this.coins,
     required this.referedByMobile,
     required this.referedByName,
     required this.otp,
@@ -66,6 +68,7 @@ class UserModel {
       state: json['state'] ?? '',
       pincode: json['pincode'] ?? '',
      aadharNumber: _parseAadhar(json['aadhar_number']),
+     coins: (json['coins'] as num?)?.toDouble(),
       referedByMobile: json['refered_by_mobile'] ?? '',
       referedByName: json['refered_by_name'] ?? '',
 

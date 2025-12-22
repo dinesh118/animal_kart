@@ -217,6 +217,29 @@ static Future<Map<String, dynamic>?> confirmManualPayment({
   }
 }
 
+static Future<UserModel?> fetchUserProfile(String mobile) async {
+  try {
+    final url = "${AppConstants.apiUrl}/users/$mobile";
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        HttpHeaders.contentTypeHeader: AppConstants.applicationJson,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data["status"] == "success" && data["user"] != null) {
+        return UserModel.fromJson(data["user"]);
+      }
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
 
 
 
