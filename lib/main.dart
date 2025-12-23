@@ -1,5 +1,7 @@
 import 'package:animal_kart_demo2/auth/screens/biometric_lock_screen.dart';
 import 'package:animal_kart_demo2/auth/firebase_options.dart';
+import 'package:animal_kart_demo2/notification/Service/navigation_service.dart';
+import 'package:animal_kart_demo2/notification/providers/notification_navigation_provider.dart';
 import 'package:animal_kart_demo2/theme/theme_provider.dart';
 import 'package:animal_kart_demo2/utils/location_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -74,9 +76,34 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final themeNotifier = ref.watch(themeNotifierProvider);
     final locale = ref.watch(localeProvider);
+ref.listen<Map<String, dynamic>?>(
+  notificationNavigationProvider,
+  (previous, data) {
+    if (data == null) return;
+
+    final navigator = NavigationService.navigatorKey.currentState;
+    if (navigator == null) return;
+
+    if (data['type'] == 'buffalo') {
+      navigator.pushNamed(
+        AppRouter.buffaloDetails,
+        
+        arguments: {'buffaloId': data['buffaloId']},
+      );
+    } else if (data['type'] == 'orders') {
+      navigator.pushNamed(AppRouter.home,arguments: 1,);
+    }
+
+    // clear after navigation
+    ref.read(notificationNavigationProvider.notifier).state = null;
+  },
+);
+
 
     return MaterialApp(
       title: 'Animal Kart',
+      navigatorKey: NavigationService.navigatorKey,
+
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib/notification/providers/navigation_service.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/notification/providers/navigation_service.dart"
+        }
+    ]
+}

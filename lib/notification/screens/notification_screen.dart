@@ -1,4 +1,5 @@
 import 'package:animal_kart_demo2/notification/models/notification_model.dart';
+import 'package:animal_kart_demo2/notification/providers/notification_navigation_provider.dart';
 import 'package:animal_kart_demo2/notification/providers/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,68 +21,76 @@ class NotificationScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-      title: const Text('Notifications'),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-  ),
-
-      body: notifications.isEmpty ? const Center(
-        child: Text(
-          'There are no notifications to show',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey,
-          ),
+        title: const Text('Notifications'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
         ),
-      ): ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (newNotifications.isNotEmpty) ...[
-            const Text("NEW", style: _sectionStyle),
-            const SizedBox(height: 10),
-            ...newNotifications.map((e) => _notificationTile(context, ref, e)),
-          ],
-
-          if (recentNotifications.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            const Text("Recent", style: _sectionStyle),
-            const SizedBox(height: 10),
-            ...recentNotifications
-                .map((e) => _notificationTile(context, ref, e)),
-          ],
-        ],
       ),
+      body: notifications.isEmpty
+          ? const Center(
+              child: Text(
+                'There are no notifications to show',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                if (newNotifications.isNotEmpty) ...[
+                  const Text("NEW", style: _sectionStyle),
+                  const SizedBox(height: 10),
+                  ...newNotifications.map(
+                    (e) => _notificationTile(ref, e),
+                  ),
+                ],
+                if (recentNotifications.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  const Text("Recent", style: _sectionStyle),
+                  const SizedBox(height: 10),
+                  ...recentNotifications.map(
+                    (e) => _notificationTile(ref, e),
+                  ),
+                ],
+              ],
+            ),
     );
   }
 
   static const TextStyle _sectionStyle =
       TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey);
 
-  Widget _notificationTile(
-      BuildContext context, WidgetRef ref, NotificationModel notification) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Dismissible(
-        key: Key(notification.id),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          padding: const EdgeInsets.only(right: 20),
-          alignment: Alignment.centerRight,
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.delete, color: Colors.white),
+  Widget _notificationTile(WidgetRef ref, NotificationModel notification) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: Dismissible(
+      key: Key(notification.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        padding: const EdgeInsets.only(right: 20),
+        alignment: Alignment.centerRight,
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(16),
         ),
-        onDismissed: (_) {
-          ref
-              .read(NotificationModelProvider.notifier)
-              .deleteNotificationModel(notification.id);
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      onDismissed: (_) {
+        ref
+            .read(NotificationModelProvider.notifier)
+            .deleteNotificationModel(notification.id);
+      },
+      child: InkWell(
+        onTap: () {
+          // ✅ ONLY SEND EVENT
+          ref.read(notificationNavigationProvider.notifier).state = {
+            'type': _getType(notification),
+            'buffaloId': notification.id,
+          };
         },
         child: Container(
           padding: const EdgeInsets.all(14),
@@ -93,7 +102,7 @@ class NotificationScreen extends ConsumerWidget {
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -124,13 +133,25 @@ class NotificationScreen extends ConsumerWidget {
               ),
               Text(
                 DateFormat('h:mm a').format(notification.time),
-                style:
-                    const TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
         ),
       ),
-    );
+    ),
+  );
+}
+
+  String _getType(NotificationModel notification) {
+    switch (notification.id) {
+      case '1':
+      case '2':
+        return 'buffalo';
+      case '3':
+        return 'orders';
+      default:
+        return '';
+    }
   }
 }
