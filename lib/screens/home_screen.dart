@@ -9,7 +9,8 @@ import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
 import 'package:animal_kart_demo2/utils/save_user.dart';
-import 'package:animal_kart_demo2/widgets/coin_widget.dart';
+import 'package:animal_kart_demo2/widgets/internet_check_wrapper.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,9 +39,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _selectedIndex = widget.selectedIndex;
     _pages = const [
-      BuffaloListScreen(),
-      OrdersScreen(),
-      UserProfileScreen(),
+      InternetCheckWrapper(
+        showFullPage: true,
+        child: BuffaloListScreen()),
+      InternetCheckWrapper(
+        showFullPage: true,
+        child: OrdersScreen()),
+      InternetCheckWrapper(
+        showFullPage: true,
+        child: UserProfileScreen()),
     ];
     _loadLocalUser();
   }
@@ -63,37 +70,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-     onWillPop: () async {
-  if (_selectedIndex != 0) {
-    
-    _goToHomeTab();
-    return false; 
-  } else {
-    
-    SystemNavigator.pop();
-    return false; 
-  }
-},
-
-      child: Scaffold(
-        backgroundColor: Theme.of(context).mainThemeBgColor,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Theme.of(context).isLightTheme
-              ? kPrimaryDarkColor
-              : Colors.grey[850],
-          elevation: 0,
-          toolbarHeight: 90,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+    return InternetCheckWrapper(
+      showSnackbar: true, 
+      child: WillPopScope(
+       onWillPop: () async {
+        if (_selectedIndex != 0) {
+      
+      _goToHomeTab();
+      return false; 
+        } else {
+      
+      SystemNavigator.pop();
+      return false; 
+        }
+      },
+      
+        child: Scaffold(
+          backgroundColor: Theme.of(context).mainThemeBgColor,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Theme.of(context).isLightTheme
+                ? kPrimaryDarkColor
+                : Colors.grey[850],
+            elevation: 0,
+            toolbarHeight: 90,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+            ),
+            centerTitle: _selectedIndex != 0,
+          title: _buildTitle(context),
+          actions: _buildActions(context),
           ),
-          centerTitle: _selectedIndex != 0,
-        title: _buildTitle(context),
-        actions: _buildActions(context),
+          body: IndexedStack(index: _selectedIndex, children: _pages),
+          bottomNavigationBar: _buildBottomNav(),
         ),
-        body: IndexedStack(index: _selectedIndex, children: _pages),
-        bottomNavigationBar: _buildBottomNav(),
       ),
     );
   }

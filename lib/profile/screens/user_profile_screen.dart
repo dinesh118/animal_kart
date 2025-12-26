@@ -71,8 +71,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     await add('Gender', user.gender);
 
     if (user.aadharNumber != 0) {
-      data['Aadhaar Number'] =
-          maskAadhaar(user.aadharNumber.toString());
+      data['Aadhaar Number'] = maskAadhaar(user.aadharNumber.toString());
     }
 
     if (user.coins != null) {
@@ -107,15 +106,18 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('Disable App Lock'),
-          content:
-              const Text('Are you sure you want to disable fingerprint lock?'),
+          content: const Text(
+            'Are you sure you want to disable fingerprint lock?',
+          ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
             TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Disable')),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Disable'),
+            ),
           ],
         ),
       );
@@ -148,7 +150,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final currentLocale = ref.watch(localeProvider).locale;
     final user = profileState.currentUser;
 
-    if (_isLoading || profileState.isLoading) {
+    if ((_isLoading || profileState.isLoading) && user == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).mainThemeBgColor,
         body: const Center(child: CircularProgressIndicator()),
@@ -158,7 +160,16 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).mainThemeBgColor,
       body: user == null
-          ? Center(child: Text(profileState.error ?? 'No profile data'))
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  profileState.error ?? 'No profile data found',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            )
           : FutureBuilder<Map<String, String>>(
               future: buildTranslatedData(user),
               builder: (context, snapshot) {
@@ -186,17 +197,25 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                         title: Text(
                           context.tr('selectLanguage'),
                           style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w700),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         trailing: DropdownButton<Locale>(
                           value: currentLocale,
                           items: const [
                             DropdownMenuItem(
-                                value: Locale('en'), child: Text('English')),
+                              value: Locale('en'),
+                              child: Text('English'),
+                            ),
                             DropdownMenuItem(
-                                value: Locale('hi'), child: Text('Hindi')),
+                              value: Locale('hi'),
+                              child: Text('Hindi'),
+                            ),
                             DropdownMenuItem(
-                                value: Locale('te'), child: Text('Telugu')),
+                              value: Locale('te'),
+                              child: Text('Telugu'),
+                            ),
                           ],
                           onChanged: (locale) {
                             if (locale != null) {
@@ -215,50 +234,50 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                         child: Text(
                           context.tr('Personal Information'),
                           style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w700),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
 
                       const SizedBox(height: 12),
                       InfoCardWidget(
-                        items: Map.from(snapshot.data!)
-                          ..remove('Coins'), 
+                        items: Map.from(snapshot.data!)..remove('Coins'),
                       ),
 
-                    // InfoCardWidget(items: snapshot.data!),
+                      // InfoCardWidget(items: snapshot.data!),
                       const SizedBox(height: 20),
-const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: CoinBadge(),
-        ),
-if (!Platform.isIOS)
-  Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).lightThemeCardColor,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            context.tr('app_lock_fingerprint'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Switch(
-            value: _isBiometricEnabled,
-            onChanged: _toggleBiometric,
-          ),
-        ],
-      ),
-    ),
-  ),
-
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: CoinBadge(),
+                      ),
+                      if (!Platform.isIOS)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).lightThemeCardColor,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  context.tr('app_lock_fingerprint'),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Switch(
+                                  value: _isBiometricEnabled,
+                                  onChanged: _toggleBiometric,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
                       const SizedBox(height: 20),
 
@@ -276,9 +295,10 @@ if (!Platform.isIOS)
                               child: Text(
                                 context.tr('refer_earn'),
                                 style: const TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600),
+                                  color: Colors.blue,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -301,9 +321,10 @@ if (!Platform.isIOS)
                               child: Text(
                                 context.tr('logout'),
                                 style: TextStyle(
-                                    color: Colors.red.shade700,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600),
+                                  color: Colors.red.shade700,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -327,8 +348,9 @@ if (!Platform.isIOS)
         content: Text(context.tr('logout_message')),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(context.tr('cancel'))),
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(context.tr('cancel')),
+          ),
           TextButton(
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
@@ -344,8 +366,7 @@ if (!Platform.isIOS)
 
     if (shouldLogout == true) {
       await SecureStorageService.enableBiometric(false);
-      Navigator.pushNamedAndRemoveUntil(
-          context, AppRouter.login, (_) => false);
+      Navigator.pushNamedAndRemoveUntil(context, AppRouter.login, (_) => false);
     }
   }
 }

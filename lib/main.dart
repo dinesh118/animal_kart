@@ -29,16 +29,16 @@ void main() async {
   }
 
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => 
+    // DevicePreview(
+    //   enabled: !kReleaseMode,
+    //   builder: (context) => 
     ProviderScope(
       child: OKToast(
         child: MyApp(isDarkMode: isDarkMode, isLoggedIn: isLoggedIn),
       ),
-    ),
-    )
-  );
+    ));
+  //   )
+  // );
 }
 
 class MyApp extends ConsumerStatefulWidget {

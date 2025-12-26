@@ -2,6 +2,8 @@ import 'package:animal_kart_demo2/auth/models/user_model.dart';
 import 'package:animal_kart_demo2/network/api_services.dart';
 import 'package:animal_kart_demo2/profile/models/%20create_user_request.dart';
 import 'package:animal_kart_demo2/profile/models/create_user_response.dart';
+import 'package:animal_kart_demo2/utils/save_user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,15 +36,31 @@ class UserManagementState {
 }
 
 // Provider
-final profileProvider = StateNotifierProvider<UserManagementNotifier, UserManagementState>(
-  (ref) => UserManagementNotifier(),
-);
+final profileProvider =
+    StateNotifierProvider<UserManagementNotifier, UserManagementState>(
+      (ref) => UserManagementNotifier(),
+    );
 
 class UserManagementNotifier extends StateNotifier<UserManagementState> {
   UserManagementNotifier() : super(UserManagementState());
 
+  // Load local profile from SharedPreferences
+  Future<void> loadLocalProfile() async {
+    try {
+      final user = await loadUserFromPrefs();
+      if (user != null) {
+        state = state.copyWith(currentUser: user);
+      }
+    } catch (e) {
+      debugPrint('Error loading local profile: $e');
+    }
+  }
+
   // Fetch current user profile
   Future<void> fetchCurrentUser() async {
+    // Start by loading local data if available
+    await loadLocalProfile();
+
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -62,15 +80,18 @@ class UserManagementNotifier extends StateNotifier<UserManagementState> {
           error: null,
         );
       } else {
+        // If user is null but we have local data, don't show error
         state = state.copyWith(
           isLoading: false,
-          error: 'User profile not found',
+          error: state.currentUser == null ? 'User profile not found' : null,
         );
       }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to load profile: ${e.toString()}',
+        error: state.currentUser == null
+            ? 'Failed to load profile: ${e.toString()}'
+            : null,
       );
     }
   }
