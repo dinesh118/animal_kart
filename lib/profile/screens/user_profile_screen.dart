@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animal_kart_demo2/auth/models/user_model.dart';
 import 'package:animal_kart_demo2/l10n/app_localizations.dart';
 import 'package:animal_kart_demo2/profile/providers/profile_provider.dart';
+import 'package:animal_kart_demo2/profile/screens/referred_users_screen.dart';
 import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/services/biometric_service.dart';
 import 'package:animal_kart_demo2/services/secure_storage_service.dart';
@@ -247,37 +248,105 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
                       // InfoCardWidget(items: snapshot.data!),
                       const SizedBox(height: 20),
-const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: CoinBadge(),
-        ),
-if (!Platform.isIOS)
-  Padding( 
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).lightThemeCardColor,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            context.tr('app_lock_fingerprint'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Switch(
-            value: _isBiometricEnabled,
-            onChanged: _toggleBiometric,
-          ),
-        ],
-      ),
-    ),
-  ),
+                      const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: CoinBadge(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              // Navigate to referral users screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ReferralUsersScreen( mobile: '6305625580',),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: Colors.blue.shade50,
+                                    child: const Icon(
+                                      Icons.groups, // multiple users icon
+                                      color: Colors.blue,
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: const [
+                                        Text(
+                                          "Referral Users",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "View users referred by you",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+
+                          
+                    if (!Platform.isIOS)
+                      Padding( 
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).lightThemeCardColor,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                context.tr('app_lock_fingerprint'),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Switch(
+                                value: _isBiometricEnabled,
+                                onChanged: _toggleBiometric,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
 
 
                       const SizedBox(height: 20),

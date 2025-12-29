@@ -10,6 +10,7 @@ import 'package:animal_kart_demo2/orders/models/order_model.dart';
 import 'package:animal_kart_demo2/profile/models/%20create_user_request.dart';
 import 'package:animal_kart_demo2/profile/models/coins_model.dart';
 import 'package:animal_kart_demo2/profile/models/create_user_response.dart';
+import 'package:animal_kart_demo2/profile/models/reffer_user_model.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/rendering.dart';
@@ -303,4 +304,33 @@ static Future<CoinTransactionResponse?> fetchCoinTransactions(String mobile) asy
     return null;
   }
 }
+
+ static Future<RefferalUserResponse?> fetchUserByMobile(String mobile) async {
+    try {
+      final url = '${AppConstants.apiUrl}/users/refferal/$mobile';
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return RefferalUserResponse.fromJson(data);
+      } else {
+        debugPrint('Failed to load user: ${response.statusCode}');
+        return null;
+      }
+    } catch (e, stack) {
+      debugPrint('USER BY MOBILE API ERROR: $e');
+      debugPrint('Stack Trace: $stack');
+      return null;
+    }
+  }
 }
+
+
+
