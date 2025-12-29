@@ -1,5 +1,6 @@
 import 'package:animal_kart_demo2/buffalo/providers/buffalo_provider.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:animal_kart_demo2/widgets/Shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
@@ -16,8 +17,9 @@ class BuffaloListScreen extends ConsumerWidget {
     return Container(
       color: Theme.of(context).mainThemeBgColor,
       child: buffaloAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: kPrimaryGreen),
+        loading: () => Center(
+          child: ordersShimmerList()
+         // CircularProgressIndicator(color: kPrimaryGreen),
         ),
 
         error: (err, _) => Center(

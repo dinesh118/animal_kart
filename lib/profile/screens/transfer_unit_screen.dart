@@ -1,3 +1,4 @@
+import 'package:animal_kart_demo2/widgets/Shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animal_kart_demo2/utils/app_constants.dart';
@@ -19,7 +20,9 @@ class TransferUnitScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: coinAsync.when(
             loading: () =>
-                const Center(child: CircularProgressIndicator()),
+                Center(child: ordersShimmerList()
+               // CircularProgressIndicator()
+                ),
             error: (e, _) => Center(child: Text(e.toString())),
             data: (response) {
             //  final transactions = response?.transactions;

@@ -9,6 +9,7 @@ import 'package:animal_kart_demo2/orders/widgets/orders_card_widget.dart';
 
 import 'package:animal_kart_demo2/orders/widgets/statuslabel_widget.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:animal_kart_demo2/widgets/Shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -171,9 +172,10 @@ void openFilterBottomSheet(BuildContext context) {
               
               Expanded(
                 child: isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
+                ? ordersShimmerList()
+                    // ? const Center(
+                    //     child: CircularProgressIndicator(),
+                    //   )
                     : filteredOrders.isEmpty
                     ?OrdersEmptyState(
                         noOrders: orders.isEmpty,

@@ -6,6 +6,7 @@ import 'package:animal_kart_demo2/routes/routes.dart';
 import 'package:animal_kart_demo2/services/razorpay_service.dart';
 import 'package:animal_kart_demo2/theme/app_theme.dart';
 import 'package:animal_kart_demo2/utils/app_colors.dart';
+import 'package:animal_kart_demo2/widgets/Shimmer_widget.dart';
 import 'package:animal_kart_demo2/widgets/payment_widgets/successful_screen.dart';
 import 'package:animal_kart_demo2/buffalo/providers/unit_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -254,7 +255,10 @@ class _BuffaloDetailsScreenState extends ConsumerState<BuffaloDetailsScreen> {
   showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (_) => const Center(child: CircularProgressIndicator()),
+    builder: (_) => Center(child:
+    ordersShimmerList()
+     //CircularProgressIndicator()
+    ),
   );
 
   try {
