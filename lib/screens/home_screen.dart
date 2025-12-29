@@ -15,6 +15,7 @@ import 'package:animal_kart_demo2/widgets/internet_check_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/translator.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -51,9 +52,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() {});
   }
 
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
     if (index == 1) {
-      ref.read(ordersProvider.notifier).loadOrders();
+       final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userMobile');
+      ref.read(ordersProvider.notifier).loadOrders(userId: userId!);
     } else if (index == 2) {
       ref.read(profileProvider.notifier).fetchCurrentUser();
     }

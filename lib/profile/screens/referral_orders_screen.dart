@@ -1,3 +1,5 @@
+
+
 import 'package:animal_kart_demo2/orders/models/order_model.dart';
 import 'package:animal_kart_demo2/orders/providers/orders_providers.dart';
 import 'package:animal_kart_demo2/orders/screens/invoice_screen.dart';
@@ -13,7 +15,7 @@ import 'package:animal_kart_demo2/widgets/Shimmer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 final filterStateProvider = StateProvider<FilterState>((ref) {
@@ -42,14 +44,15 @@ class FilterState {
   }
 }
 
-class OrdersScreen extends ConsumerStatefulWidget {
-  const OrdersScreen({super.key});
+class ReferralOrdersScreen extends ConsumerStatefulWidget {
+  final String refferalMobileNumber;
+  const ReferralOrdersScreen({super.key,required this.refferalMobileNumber});
 
   @override
-  ConsumerState<OrdersScreen> createState() => _OrdersScreenState();
+  ConsumerState<ReferralOrdersScreen> createState() => _ReferralOrdersScreenState();
 }
 
-class _OrdersScreenState extends ConsumerState<OrdersScreen> {
+class _ReferralOrdersScreenState extends ConsumerState<ReferralOrdersScreen> {
   @override
   void initState() {
     super.initState();
@@ -69,10 +72,7 @@ void openFilterBottomSheet(BuildContext context) {
 
   Future<void> _loadOrders() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('userMobile');
-
-      await ref.read(ordersProvider.notifier).loadOrders(userId: userId!);
+      await ref.read(ordersProvider.notifier).loadOrders(userId: widget.refferalMobileNumber);
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +116,15 @@ void openFilterBottomSheet(BuildContext context) {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
+        appBar: AppBar(
+      title: const Text('Referred Orders'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new), // iOS-style back icon
+        onPressed: () {
+          Navigator.pop(context); // Go back to previous screen
+        },
+      ),
+    ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _loadOrders,
@@ -320,8 +329,8 @@ void openFilterBottomSheet(BuildContext context) {
                                             );
                                           }
                                         },
-                                        showInvoice:true,
-                                        showTrack: true,
+                                         showInvoice:false,
+                                        showTrack: false,
                                       ),
                                     );
                                   },

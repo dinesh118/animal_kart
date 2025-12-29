@@ -1,6 +1,7 @@
-import 'package:animal_kart_demo2/profile/models/reffer_user_model.dart';
+
 import 'package:animal_kart_demo2/profile/models/refferal_user_state.dart';
 import 'package:animal_kart_demo2/profile/providers/refferal_provider.dart';
+import 'package:animal_kart_demo2/profile/screens/referral_orders_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,23 +21,23 @@ class _ReferralUsersScreenState extends ConsumerState<ReferralUsersScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch immediately after build
+   
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(refferalUserProvider.notifier).fetchUsersByMobile(widget.mobile);
     });
   }
 
-  // Optional: Refresh when pulling down
+
   Future<void> _refresh() async {
     await ref.read(refferalUserProvider.notifier).fetchUsersByMobile(widget.mobile);
   }
 
-  void _onUserTap(RefUsers user) {
+  void _onUserTap(String mobile) {
     debugPrint('user clicked');
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (_) => UserDetailsScreen(user: user)),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ReferralOrdersScreen(refferalMobileNumber: mobile,)),
+    );
   }
 
   @override
@@ -113,7 +114,7 @@ class _ReferralUsersScreenState extends ConsumerState<ReferralUsersScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () => _onUserTap(user),
+              onTap: () => _onUserTap(user.mobile),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

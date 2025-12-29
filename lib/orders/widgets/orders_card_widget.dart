@@ -12,11 +12,15 @@ import '../../manualpayment/screens/manual_payment_screen.dart';
 class BuffaloOrderCard extends StatelessWidget {
   final OrderUnit order;
   final Future<void> Function() onTapInvoice;
+  final bool showInvoice;
+  final bool showTrack;
 
   const BuffaloOrderCard({
     super.key,
     required this.order,
     required this.onTapInvoice,
+    required this.showInvoice,
+    required this.showTrack,
   });
 
   @override
@@ -299,7 +303,7 @@ String localizedPaymentType(BuildContext context, String paymentType) {
 
                     if (showPaymentType) ...[
 
-                        if (isPaid)
+                        if (isPaid && showTrack)
                         GestureDetector(
                           onTap: (){
                             Navigator.push(
@@ -355,9 +359,7 @@ String localizedPaymentType(BuildContext context, String paymentType) {
 
                         
                       ),
-
-                      /// INVOICE ONLY WHEN PAID
-                      if (isPaid)
+                      if (isPaid && showInvoice)
                         GestureDetector(
                           onTap: onTapInvoice,
                           child: Container(
