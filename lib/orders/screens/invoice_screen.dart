@@ -12,23 +12,15 @@ class InvoiceGenerator {
     final pdf = pw.Document();
 
     /// ---------- BUSINESS LOGIC ----------
-    const double halfUnitCost = 175000; // cost per 0.5 unit (1 buffalo + 1 calf)
-   double cpfPerUnit = order.cpfUnitCost; // get from backend
- //const double cpfPerUnit = 13000; // CPF per half unit
+    double baseUnitCost = order.baseUnitCost;       // from backend
+    double cpfUnitCost = order.cpfUnitCost;         // from backend
+    double units = order.numUnits;
 
-    double units = order.numUnits; // exact units entered
-
-    // Subtotal = units × 2 halves × halfUnitCost
-    double subtotalAmount = units * 2 * halfUnitCost;
+    // Subtotal = units × baseUnitCost
+    double subtotalAmount =  baseUnitCost;
 
     // CPF calculation
-    int totalHalves = (units * 2).ceil(); // for CPF counting
-    int freeCpf = (totalHalves / 2).floor(); // 1 CPF free per 1 unit (2 halves)
-    int paidCpf = totalHalves - freeCpf; // remaining halves charged CPF
-    double cpfAmount = paidCpf * cpfPerUnit;
-    double cpfDiscountAmount = freeCpf * cpfPerUnit;
-
-    // Total invoice amount
+    double cpfAmount = order.withCpf ? cpfUnitCost : 0.0;
     double totalAmount = subtotalAmount + cpfAmount;
 
     /// ---------- ASSETS ----------
@@ -128,19 +120,19 @@ class InvoiceGenerator {
 
                       /// BASE COST ROW
                       buildRow(
-                        "Breed: ${order.breedId}\nBuffalos: ${(units * 2).ceil()}\nCalves: ${(units * 2).ceil()}",
-                        "$units", // display exact units
-                        FormatUtils.formatAmount(halfUnitCost * 2), // 1 unit price
-                        FormatUtils.formatAmount(subtotalAmount),
+                        "Breed: ${order.breedId}\nBuffalos: ${order.buffaloCount}\nCalves: ${order.calfCount}",
+                        "$units",                          // Qty
+                        FormatUtils.formatAmount(baseUnitCost), // Unit Price (base unit cost)
+                        FormatUtils.formatAmount(baseUnitCost), // Amount (per unit, not multiplied)
                       ),
 
                       /// CPF ROW
-                      if (order.withCpf && cpfAmount > 0)
+                      if (order.withCpf && cpfUnitCost > 0)
                         buildRow(
                           "CPF Amount",
-                          "$paidCpf",
-                          FormatUtils.formatAmount(cpfPerUnit),
-                          FormatUtils.formatAmount(cpfAmount),
+                          "$units",                          // Qty (number of units)
+                          FormatUtils.formatAmount(cpfUnitCost), // Unit Price (CPF per unit)
+                          FormatUtils.formatAmount(cpfUnitCost), // Amount (per unit, not multiplied)
                         ),
                     ],
                   ),
@@ -153,31 +145,8 @@ class InvoiceGenerator {
                       crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         _priceRow("Subtotal", FormatUtils.formatAmount(subtotalAmount)),
-                        if (order.withCpf && cpfAmount > 0)
+                        if (order.withCpf && cpfUnitCost > 0)
                           _priceRow("CPF", FormatUtils.formatAmount(cpfAmount)),
-
-                        // CPF Discount
-                        if (order.withCpf && cpfDiscountAmount > 0)
-                          pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.end,
-                            children: [
-                              pw.Text("CPF Discount: "),
-                              pw.SizedBox(width: 5),
-                              pw.Text(
-                                FormatUtils.formatAmount(cpfDiscountAmount),
-                                style: pw.TextStyle(
-                                  decoration: pw.TextDecoration.lineThrough,
-                                  color: PdfColors.red,
-                                ),
-                              ),
-                              pw.SizedBox(width: 5),
-                              pw.Text(
-                                FormatUtils.formatAmount(0),
-                                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                              ),
-                            ],
-                          ),
-
                         pw.Divider(),
                         _priceRow("Total", FormatUtils.formatAmount(totalAmount), bold: true),
                       ],
