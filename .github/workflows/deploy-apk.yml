@@ -2,7 +2,7 @@ name: Deploy APK to Firebase
 
 on:
   workflow_run:
-    workflows: ["Build APK"]
+    workflows: ["Build Android APK"]
     types:
       - completed
   workflow_dispatch:
