@@ -1,0 +1,26 @@
+name: Deploy APK to Firebase
+
+on:
+  workflow_run:
+    workflows: ["Build APK"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: animal-kart-apk
+
+      - name: Upload APK to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v4
+        with:
+          appId: 1:1081415237908:android:90e80a1a2c8131528c8201
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: testers
+          file: app-debug.apk
