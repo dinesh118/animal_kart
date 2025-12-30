@@ -9,13 +9,20 @@ on:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
 
     steps:
       - name: Download APK artifact
         uses: actions/download-artifact@v4
         with:
           name: android-apk
+          run-id: ${{ github.event.workflow_run.id }}
+          repository: ${{ github.repository }}
 
       - name: Upload APK to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
